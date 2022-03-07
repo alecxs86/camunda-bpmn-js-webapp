@@ -1,0 +1,103 @@
+{
+  "name": "camunda-bpmn-js-webapp",
+  "version": "0.0.1-alpha.3",
+  "description": "Embeddable Camunda modeling distributions based on bpmn-js",
+  "scripts": {
+    "all": "run-s lint dev",
+    "lint": "eslint .",
+    "dev": "npm test -- --auto-watch --no-single-run",
+    "start": "run-s bundle serve",
+    "bundle": "run-s bundle:*",
+    "bundle:js": "webpack -c webpack.config.js",
+    "bundle:less": "lessc src/app.less public/app.css",
+    "serve": "sirv public --dev"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/camunda/camunda-bpmn-js"
+  },
+  "keywords": [
+    "bpmn",
+    "bpmn20",
+    "camunda",
+    "zeebe",
+    "modeling",
+    "bpmn-js"
+  ],
+  "author": {
+    "name": "Niklas Kiefer",
+    "url": "https://github.com/pinussilvestrus"
+  },
+  "contributors": [
+    {
+      "name": "bpmn.io contributors",
+      "url": "https://github.com/bpmn-io"
+    }
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "@bpmn-io/align-to-origin": "^0.7.0",
+    "@bpmn-io/properties-panel": "^0.11.0",
+    "autoprefixer": "^10.4.2",
+    "bpmn-js": "^8.10.0",
+    "bpmn-js-disable-collapsed-subprocess": "^0.1.3",
+    "bpmn-js-executable-fix": "^0.1.3",
+    "bpmn-js-properties-panel": "~1.0.0-alpha.5",
+    "camunda-bpmn-moddle": "^6.1.2",
+    "css-loader": "^6.7.0",
+    "default-passive-events": "^2.0.0",
+    "diagram-js": "^8.1.1",
+    "diagram-js-minimap": "^2.1.0",
+    "diagram-js-origin": "^1.3.2",
+    "inherits": "^2.0.4",
+    "jquery": "^3.5.1",
+    "less-loader": "^10.2.0",
+    "min-dash": "^3.8.1",
+    "postcss-loader": "^6.2.1",
+    "sass": "^1.49.9",
+    "sass-loader": "^12.6.0",
+    "style-loader": "^3.3.1",
+    "zeebe-bpmn-moddle": "^0.11.0"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^17.1.0",
+    "@rollup/plugin-json": "^4.1.0",
+    "@rollup/plugin-node-resolve": "^11.1.1",
+    "camunda-bpmn-js": "^0.12.2",
+    "chai": "^4.2.0",
+    "copy-webpack-plugin": "^7.0.0",
+    "cross-env": "^7.0.3",
+    "eslint": "^7.32.0",
+    "eslint-plugin-bpmn-io": "^0.13.0",
+    "execa": "^5.0.0",
+    "istanbul-instrumenter-loader": "^3.0.1",
+    "karma": "^6.3.16",
+    "karma-chai": "^0.1.0",
+    "karma-chrome-launcher": "^3.1.0",
+    "karma-coverage": "^2.0.3",
+    "karma-debug-launcher": "0.0.4",
+    "karma-env-preprocessor": "^0.1.1",
+    "karma-firefox-launcher": "^2.1.0",
+    "karma-mocha": "^2.0.1",
+    "karma-safari-launcher": "^1.0.0",
+    "karma-sinon-chai": "^2.0.2",
+    "karma-webpack": "^5.0.0",
+    "less": "^4.1.2",
+    "min-dom": "^3.1.3",
+    "mocha": "^9.2.0",
+    "mocha-test-container-support": "^0.2.0",
+    "npm-run-all": "^4.1.5",
+    "preact": "^10.6.6",
+    "puppeteer": "^8.0.0",
+    "raw-loader": "^4.0.2",
+    "rollup": "^2.38.4",
+    "rollup-plugin-copy": "^3.3.0",
+    "rollup-plugin-terser": "^7.0.2",
+    "sinon": "^9.2.4",
+    "sinon-chai": "^3.5.0",
+    "sirv-cli": "^1.0.10",
+    "source-map-loader": "^1.0.0",
+    "webpack": "^5.20.1",
+    "webpack-cli": "^4.9.2"
+  }
+}
