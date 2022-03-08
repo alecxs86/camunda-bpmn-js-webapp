@@ -107,7 +107,7 @@ $(function() {
 
   var downloadLink = $('#js-download-diagram');
   var downloadSvgLink = $('#js-download-svg');
-  var deployLink = $('#js-deploy-resource');
+//  var deployLink = $('#js-deploy-resource');
 
   $('.buttons a').click(function(e) {
     if (!$(this).is('.active')) {
