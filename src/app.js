@@ -1,6 +1,8 @@
-require('default-passive-events');
+//require('default-passive-events');
 import $ from 'jquery';
 import BpmnModeler from 'camunda-bpmn-js/lib/camunda-platform/Modeler';
+
+//import ResourceDeployer from 'camunda-resource-deployer-js/lib/ResourceDeployer'
 
 import 'camunda-bpmn-js/dist/assets/camunda-platform-modeler.css';
 
@@ -12,12 +14,15 @@ var container = $('#js-drop-zone');
 
 var canvas = $('#js-canvas');
 
+//var deployer = null;
+
 var bpmnModeler = new BpmnModeler({
   container: '#canvas',
   propertiesPanel: {
     parent: '#properties'
   }
 });
+container.removeClass('with-diagram');
 
 function createNewDiagram() {
   openDiagram(diagramXML);
@@ -102,6 +107,7 @@ $(function() {
 
   var downloadLink = $('#js-download-diagram');
   var downloadSvgLink = $('#js-download-svg');
+  var deployLink = $('#js-deploy-resource');
 
   $('.buttons a').click(function(e) {
     if (!$(this).is('.active')) {
@@ -109,7 +115,43 @@ $(function() {
       e.stopPropagation();
     }
   });
+/**
+  deployLink.click(function(e) {
+    if(deployer) {
+      return;
+    }
 
+    var closeBtn = document.createElement('button');
+    closeBtn.textContent = 'X';
+    closeBtn.addEventListener('click', function() {
+      $('#js-resource-deployer').toggleClass('active', false);
+      deployer.close();
+      deployer = null;
+    });
+
+    $('#js-resource-deployer').append(closeBtn);
+
+    var filename = bpmnModeler.get('canvas').getRootElement().businessObject.name;
+    if(filename) {
+      filename += '.bpmn';
+    }
+    else {
+      filename = 'process.bpmn';
+    }
+
+    deployer = new ResourceDeployer({
+      apiUrl: 'http://localhost:8080/engine-rest',
+      filename: filename,
+      container: $('#js-resource-deployer')[0],
+      resourceProvider: function(done) {
+        bpmnModeler.saveXML(done);
+      }
+    });
+
+    $('#js-resource-deployer').toggleClass('active');
+
+  });
+**/
   function setEncoded(link, name, data) {
     var encodedData = encodeURIComponent(data);
 
@@ -148,6 +190,8 @@ $(function() {
 
       setEncoded(downloadLink, 'diagram.bpmn', null);
     }
+
+    //deployLink.addClass('active');
   }, 500);
 
   bpmnModeler.on('commandStack.changed', exportArtifacts);

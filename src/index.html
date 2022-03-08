@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>bpmn-js properties panel demo</title>
+  <title>camunda-bpmn-js webapp</title>
 <!--
   <link rel="stylesheet" href="vendor/bpmn-js/assets/diagram-js.css" />
   <link rel="stylesheet" href="vendor/bpmn-js/assets/bpmn-js.css" />
@@ -33,6 +33,7 @@
 
     <div class="canvas" id="canvas"></div>
     <div class="properties-panel-parent" id="properties"></div>
+    <div class="resource-deployer" id="js-resource-deployer"></div>
   </div>
 
   <ul class="buttons">
@@ -48,6 +49,11 @@
       <a id="js-download-svg" href title="download as SVG image">
         SVG image
       </a>
+    </li>
+    <li>
+      <button id="js-deploy-resource" title="deploy a BPMN or DMN resource">
+        Deploy
+      </button>
     </li>
   </ul>
 
