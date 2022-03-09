@@ -11,13 +11,12 @@ module.exports = {
   },
   module: {
     rules: [
-      
-   {
-    test: /\.js$/,
-    enforce: 'pre',
-    use: ['source-map-loader'],
-     },
-     {
+      {
+        test: /\.js$/,
+        enforce: 'pre',
+        use: ['source-map-loader'],
+      },
+      {
         test: /\.bpmn$/,
         use: {
           loader: 'raw-loader'
@@ -34,7 +33,7 @@ module.exports = {
               postcssOptions:
               {
                 plugins: [
-                    require("autoprefixer")()
+                  require("autoprefixer")()
                 ]
               }
             },
@@ -50,12 +49,12 @@ module.exports = {
         { from: 'src/index.html', to: '.' },
       ]
     })
-  ]
-/**
+  ],
+
   resolve: {
-        fallback: {
-            "fs": false
-        },
+    fallback: {
+      "fs": false
     }
-**/
+  }
+
 };
