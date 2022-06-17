@@ -1,8 +1,12 @@
-//require('default-passive-events');
+require('default-passive-events');
 import $ from 'jquery';
 import BpmnModeler from 'camunda-bpmn-js/lib/camunda-platform/Modeler';
+// import qaExtension from '../resources/qa.json'
 
-import ResourceDeployer from 'camunda-resource-deployer-js/lib/ResourceDeployer'
+import customControlsModule from '../custom';
+
+//import ResourceDeployer from 'camunda-resource-deployer-js/lib/ResourceDeployer'
+// var ResourceDeployer = require('camunda-resource-deployer-js');
 
 import 'camunda-bpmn-js/dist/assets/camunda-platform-modeler.css';
 
@@ -20,7 +24,13 @@ var bpmnModeler = new BpmnModeler({
   container: '#canvas',
   propertiesPanel: {
     parent: '#properties'
-  }
+  },
+  // moddleExtensions: {
+  //   qa: qaExtension
+  // },
+  additionalModules: [
+    customControlsModule
+  ]
 });
 container.removeClass('with-diagram');
 
@@ -107,7 +117,7 @@ $(function() {
 
   var downloadLink = $('#js-download-diagram');
   var downloadSvgLink = $('#js-download-svg');
-  var deployLink = $('#js-deploy-resource');
+  // var deployLink = $('#js-deploy-resource');
 
   $('.buttons a').click(function(e) {
     if (!$(this).is('.active')) {
@@ -115,7 +125,7 @@ $(function() {
       e.stopPropagation();
     }
   });
-
+/**
   deployLink.click(function(e) {
     if(deployer) {
       return;
@@ -151,7 +161,7 @@ $(function() {
     $('#js-resource-deployer').toggleClass('active');
 
   });
-
+ 
   function setEncoded(link, name, data) {
     var encodedData = encodeURIComponent(data);
 
@@ -164,7 +174,7 @@ $(function() {
       link.removeClass('active');
     }
   }
-
+*/
   var exportArtifacts = debounce(async function() {
 
     try {
@@ -191,7 +201,7 @@ $(function() {
       setEncoded(downloadLink, 'diagram.bpmn', null);
     }
 
-    deployLink.addClass('active');
+    // deployLink.addClass('active');
   }, 500);
 
   bpmnModeler.on('commandStack.changed', exportArtifacts);
