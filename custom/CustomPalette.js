@@ -28,6 +28,17 @@ export default class CustomPalette {
       translate
     } = this
 
+    const generateRandomString = (myLength) => {
+      const chars =
+        "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890";
+      const randomArray = Array.from(
+        { length: myLength },
+        (v, k) => chars[Math.floor(Math.random() * chars.length)]
+      );
+    
+      const randomString = randomArray.join("");
+      return randomString;
+    };    
 
     function createGetWeightTask(event) {
 
@@ -35,6 +46,8 @@ export default class CustomPalette {
 
       const shape = elementFactory.createShape({ type: 'bpmn:Task' });
       shape.businessObject.name = 'Get Weight';
+
+      shape.businessObject.id = 'Activity_Get_Weight_' + generateRandomString(7);
 
       var selectedProperty = bpmnFactory.create('camunda:Property', {
         name: 'absoluteWeightThreshold',

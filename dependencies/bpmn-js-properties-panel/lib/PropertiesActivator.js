@@ -127,7 +127,13 @@ PropertiesActivator.prototype.isPropertyEditable = function (propertyName, eleme
   if (entry.id === 'properties') {
     if (propertyName === 'name')
       return false;
-  }  // inactivates only the name field of the  propertyEntry in Extensions tab
+  }  // inactivates only the name field of the  propertyEntry in Extensions tab,
+  
+  if (element.businessObject.name === 'Get Weight') {
+    if (propertyName === 'id') 
+      return false;
+  } // inactivates the id of the Get Weight task so it cannot be edited
+    
 
   return true;
 };

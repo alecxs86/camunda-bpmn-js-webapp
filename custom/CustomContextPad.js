@@ -30,13 +30,25 @@ export default class CustomContextPad {
       translate
     } = this;
 
+    const generateRandomString = (myLength) => {
+      const chars =
+        "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890";
+      const randomArray = Array.from(
+        { length: myLength },
+        (v, k) => chars[Math.floor(Math.random() * chars.length)]
+      );
+    
+      const randomString = randomArray.join("");
+      return randomString;
+    };    
+
     function appendGetWeightTask(event, element) {
       if (autoPlace) {
         var commands = [];
         const shape = elementFactory.createShape({ type: 'bpmn:Task' });
         shape.businessObject.name = 'Get Weight';
 
-
+        shape.businessObject.id = 'Activity_Get_Weight_' + generateRandomString(7);
         var selectedProperty = bpmnFactory.create('camunda:Property', {
           name: 'absoluteWeightThreshold',
           value: WEIGHT_THRESHOLD
@@ -45,7 +57,7 @@ export default class CustomContextPad {
         var properties = bpmnFactory.create('camunda:Properties', {
           values: [selectedProperty]
         });
-        console.log(properties);
+
         shape.businessObject.extensionElements = shape.businessObject.extensionElements || bpmnFactory.create('bpmn:ExtensionElements');
         shape.businessObject.extensionElements.get('values').push(properties);
 
@@ -60,7 +72,7 @@ export default class CustomContextPad {
       const shape = elementFactory.createShape({ type: 'bpmn:Task' });
       shape.businessObject.name = 'Get Weight';
 
-
+      shape.businessObject.id = 'Activity_Get_Weight_' + generateRandomString(7); 
       var selectedProperty = bpmnFactory.create('camunda:Property', {
         name: 'absoluteWeightThreshold',
         value: WEIGHT_THRESHOLD
