@@ -1,7 +1,6 @@
 require('default-passive-events');
 import $ from 'jquery';
 import BpmnModeler from 'camunda-bpmn-js/lib/camunda-platform/Modeler';
-// import qaExtension from '../resources/qa.json'
 
 import customControlsModule from '../custom';
 
@@ -32,6 +31,7 @@ var bpmnModeler = new BpmnModeler({
     customControlsModule
   ]
 });
+
 container.removeClass('with-diagram');
 
 function createNewDiagram() {
@@ -105,7 +105,7 @@ if (!window.FileList || !window.FileReader) {
 }
 
 // bootstrap diagram functions
-
+/** 
 $(function() {
 
   $('#js-create-diagram').click(function(e) {
@@ -125,6 +125,7 @@ $(function() {
       e.stopPropagation();
     }
   });
+  **/
 /**
   deployLink.click(function(e) {
     if(deployer) {
@@ -161,7 +162,7 @@ $(function() {
     $('#js-resource-deployer').toggleClass('active');
 
   });
- 
+ */
   function setEncoded(link, name, data) {
     var encodedData = encodeURIComponent(data);
 
@@ -174,35 +175,103 @@ $(function() {
       link.removeClass('active');
     }
   }
-*/
-  var exportArtifacts = debounce(async function() {
 
+  // var exportArtifacts = debounce(async function() {
+
+  //   try {
+
+  //     const { svg } = await bpmnModeler.saveSVG();
+
+  //     setEncoded(downloadSvgLink, 'diagram.svg', svg);
+  //   } catch (err) {
+
+  //     console.error('Error happened saving SVG: ', err);
+
+  //     setEncoded(downloadSvgLink, 'diagram.svg', null);
+  //   }
+
+  //   try {
+
+  //     const { xml } = await bpmnModeler.saveXML({ format: true });
+
+  //     setEncoded(downloadLink, 'diagram.bpmn', xml);
+  //   } catch (err) {
+
+  //     console.log('Error happened saving XML: ', err);
+
+  //     setEncoded(downloadLink, 'diagram.bpmn', null);
+  //   }
+
+  //   // deployLink.addClass('active');
+  // }, 500);
+  async function saveSVG() {
     try {
-
-      const { svg } = await bpmnModeler.saveSVG();
-
-      setEncoded(downloadSvgLink, 'diagram.svg', svg);
-    } catch (err) {
-
-      console.error('Error happened saving SVG: ', err);
-
-      setEncoded(downloadSvgLink, 'diagram.svg', null);
+      const result = await bpmnModeler.saveSVG();
+      const { svg } = result;
+      const { err } = result;
+      var downloadSvgLink = $('#js-download-svg');
+      setEncoded(downloadSvgLink, 'diagram.svg', err ? null : svg);
     }
-
+    catch(err) {
+      console.log(err);
+    }
+  }
+  
+  async function saveDiagram() {
     try {
-
-      const { xml } = await bpmnModeler.saveXML({ format: true });
-
-      setEncoded(downloadLink, 'diagram.bpmn', xml);
-    } catch (err) {
-
-      console.log('Error happened saving XML: ', err);
-
-      setEncoded(downloadLink, 'diagram.bpmn', null);
+      const result = await bpmnModeler.saveXML({ format: true });
+      const { xml } = result;
+      const { err } = result;
+      var downloadLink = $('#js-download-diagram');
+      setEncoded(downloadLink, 'diagram.bpmn', err ? null : xml);
     }
+    catch(err) {
+      console.log(err);
+    }
+  }
+  
+  $(function() {
 
-    // deployLink.addClass('active');
-  }, 500);
+    $('#js-create-diagram').click(function(e) {
+      e.stopPropagation();
+      e.preventDefault();
+  
+      createNewDiagram();
+    });
 
-  bpmnModeler.on('commandStack.changed', exportArtifacts);
+    $('.buttons a').click(function(e) {
+      if (!$(this).is('.active')) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    });
+  
+    var exportArtifacts = debounce(function() {
+  
+      saveSVG();
+      saveDiagram();
+  
+    }, 500);
+  
+  
+    bpmnModeler.on('commandStack.changed', exportArtifacts);
+    bpmnModeler.on('comments.updated', exportArtifacts);
+  
+  bpmnModeler.on('canvas.click', function() {
+    bpmnModeler.get('comments').collapseAll();
+  });
+  function debounce(fn, timeout) {
+
+    var timer;
+  
+    return function() {
+      if (timer) {
+        clearTimeout(timer);
+      }
+  
+      timer = setTimeout(fn, timeout);
+    };
+  };
+
 });
+

@@ -1,9 +1,15 @@
-const { ExtensionElementsHelper } = require('bpmn-js-properties-panel/lib/helper/ExtensionElementsHelper');
+// const { ExtensionElementsHelper } = require('bpmn-js-properties-panel/lib/provider/camunda/');
 
-const { BpmnFactory } = require('bpmn-js/lib/features/modeling')
+// const { PropertiesProps } = require('bpmn-js-properties-panel/lib/provider/camunda/parts/PropertiesProps')
+
+// import { default as camundaModdleDescriptor } from 'camunda-bpmn-moddle/resources/camunda.json';
+
+
+const WEIGHT_THRESHOLD = 55;
 
 export default class CustomContextPad {
-  constructor(config, contextPad, create, elementFactory, injector, translate) {
+  constructor(bpmnFactory, config, contextPad, create, elementFactory, injector, translate) {
+    this.bpmnFactory = bpmnFactory;
     this.create = create;
     this.elementFactory = elementFactory;
     this.translate = translate;
@@ -18,6 +24,7 @@ export default class CustomContextPad {
   getContextPadEntries(element) {
     const {
       autoPlace,
+      bpmnFactory,
       create,
       elementFactory,
       translate
@@ -25,10 +32,23 @@ export default class CustomContextPad {
 
     function appendGetWeightTask(event, element) {
       if (autoPlace) {
-        
+        var commands = [];
         const shape = elementFactory.createShape({ type: 'bpmn:Task' });
         shape.businessObject.name = 'Get Weight';
-        
+
+
+        var selectedProperty = bpmnFactory.create('camunda:Property', {
+          name: 'absoluteWeightThreshold',
+          value: WEIGHT_THRESHOLD
+        });
+
+        var properties = bpmnFactory.create('camunda:Properties', {
+          values: [selectedProperty]
+        });
+        console.log(properties);
+        shape.businessObject.extensionElements = shape.businessObject.extensionElements || bpmnFactory.create('bpmn:ExtensionElements');
+        shape.businessObject.extensionElements.get('values').push(properties);
+
         autoPlace.append(element, shape);
       } else {
         appendGetWeightTaskStart(event, element);
@@ -36,9 +56,23 @@ export default class CustomContextPad {
     }
 
     function appendGetWeightTaskStart(event) {
+      var commands = [];
       const shape = elementFactory.createShape({ type: 'bpmn:Task' });
       shape.businessObject.name = 'Get Weight';
-        
+
+
+      var selectedProperty = bpmnFactory.create('camunda:Property', {
+        name: 'absoluteWeightThreshold',
+        value: WEIGHT_THRESHOLD
+      });
+
+      var properties = bpmnFactory.create('camunda:Properties', {
+        values: [selectedProperty]
+      });
+
+      shape.businessObject.extensionElements = shape.businessObject.extensionElements || bpmnFactory.create('bpmn:ExtensionElements');
+      shape.businessObject.extensionElements.get('values').push(properties);
+
       create.start(event, shape, element);
     }
 
@@ -57,6 +91,7 @@ export default class CustomContextPad {
 }
 
 CustomContextPad.$inject = [
+  'bpmnFactory',
   'config',
   'contextPad',
   'create',

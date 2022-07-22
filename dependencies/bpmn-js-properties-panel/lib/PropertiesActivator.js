@@ -2,8 +2,6 @@
 
 const { getBusinessObject } = require("bpmn-js/lib/util/ModelUtil");
 
-// var values = require('./provider/camunda/predef/predefined.json');
-
 var DEFAULT_PRIORITY = 1000;
 
 
