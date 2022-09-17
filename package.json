@@ -1,7 +1,6 @@
 {
   "name": "camunda-bpmn-js-webapp",
   "version": "0.0.1-alpha.3",
-  "description": "Embeddable Camunda modeling distributions based on bpmn-js",
   "scripts": {
     "all": "run-s lint dev",
     "lint": "eslint .",
@@ -37,12 +36,17 @@
   "license": "MIT",
   "dependencies": {
     "autoprefixer": "^10.4.2",
+    "bpmn-js-properties-panel": "file:dependencies/bpmn-js-properties-panel",
     "camunda-bpmn-js": "^0.12.2",
+    "camunda-resource-deployer-js": "^0.1.0",
     "css-loader": "^6.7.0",
+    "custom": "^0.0.0",
     "default-passive-events": "^2.0.0",
+    "dependencies": "^0.0.1",
     "inherits": "^2.0.4",
     "jquery": "^3.5.1",
     "less-loader": "^10.2.0",
+    "lodash": "^4.17.21",
     "min-dash": "^3.8.1",
     "postcss-loader": "^6.2.1",
     "sass": "^1.49.9",
@@ -62,7 +66,6 @@
     "eslint": "^7.32.0",
     "eslint-plugin-bpmn-io": "^0.13.0",
     "execa": "^5.0.0",
-    "istanbul-instrumenter-loader": "^3.0.1",
     "karma": "^6.3.16",
     "karma-chai": "^0.1.0",
     "karma-chrome-launcher": "^3.1.0",
