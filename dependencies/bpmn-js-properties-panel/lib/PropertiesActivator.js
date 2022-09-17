@@ -1,6 +1,7 @@
 'use strict';
 
 const { getBusinessObject } = require("bpmn-js/lib/util/ModelUtil");
+var is = require('bpmn-js/lib/util/ModelUtil').is;
 
 var DEFAULT_PRIORITY = 1000;
 
@@ -103,11 +104,23 @@ PropertiesActivator.prototype.isEntryVisible = function (element, entry, group, 
     case 'connector':
       return false;
       break;
+    case 'extensionElements':
+      switch (group.id) {
+        case 'extensionElements-properties':
+          if ((is(element, 'bpmn:Task' )) && (getBusinessObject(element).name == 'Set User State')) {
+            return false;
+            break;
+          }
+        default:
+          return true;  
+      }
     default:
       return true;
   }
+}
 
-};
+
+  // in case the activity is "set User State" we hide the Properties group, leaving only the User State Settings group
 
 /**
  * Should the given property be editable for the specified element
@@ -129,7 +142,7 @@ PropertiesActivator.prototype.isPropertyEditable = function (propertyName, eleme
       return false;
   }  // inactivates only the name field of the  propertyEntry in Extensions tab,
   
-  if (element.businessObject.name === 'Get Weight') {
+  if (element.businessObject.name === 'Get Weight' || element.businessObject.name === 'Set User State' ) {
     if (propertyName === 'id') 
       return false;
   } // inactivates the id of the Get Weight task so it cannot be edited

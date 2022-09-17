@@ -2,8 +2,7 @@
 
 var properties = require('./implementation/Properties'),
     elementHelper = require('../../../helper/ElementHelper'),
-    cmdHelper = require('../../../helper/CmdHelper');
-
+    cmdHelper = require('../../../helper/CmdHelper');  
 
 module.exports = function(group, element, bpmnFactory, translate) {
 
@@ -28,6 +27,6 @@ module.exports = function(group, element, bpmnFactory, translate) {
 
   if (propertiesEntry) {
     group.entries.push(propertiesEntry);
-  }
+  }  
 
 };

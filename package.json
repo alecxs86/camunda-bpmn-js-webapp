@@ -46,6 +46,7 @@
     "inherits": "^2.0.4",
     "jquery": "^3.5.1",
     "less-loader": "^10.2.0",
+    "lodash": "^4.17.21",
     "min-dash": "^3.8.1",
     "postcss-loader": "^6.2.1",
     "sass": "^1.49.9",

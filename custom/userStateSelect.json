@@ -1,0 +1,14 @@
+[
+  {
+    "name": "Healthy",
+    "value": "Healthy"
+  },
+  {
+    "name": "At Risk",
+    "value": "At Risk"
+  },
+  {
+    "name": "Sick",
+    "value": "Sick"
+  }
+]

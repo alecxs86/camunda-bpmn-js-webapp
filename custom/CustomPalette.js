@@ -1,14 +1,7 @@
 'use strict';
 
-// const { ExtensionElementsHelper } = require('bpmn-js-properties-panel/lib/helper/ExtensionElementsHelper');
-
-// const { PropertiesProps } = require('bpmn-js-properties-panel/lib/provider/camunda/parts/PropertiesProps')
-
-var findExtension = require('bpmn-js-properties-panel/lib/provider/camunda/element-templates/Helper').findExtension;
-
-var cmdHelper = require('bpmn-js-properties-panel/lib/helper/CmdHelper');
-
 const WEIGHT_THRESHOLD = 55;
+const NO_DAYS_THRESHOLD = 3;
 
 export default class CustomPalette {
   constructor(bpmnFactory, create, elementFactory, palette, translate) {
@@ -35,48 +28,62 @@ export default class CustomPalette {
         { length: myLength },
         (v, k) => chars[Math.floor(Math.random() * chars.length)]
       );
-    
+
       const randomString = randomArray.join("");
       return randomString;
-    };    
+    };
 
     function createGetWeightTask(event) {
 
-      var commands = [];
-
-      const shape = elementFactory.createShape({ type: 'bpmn:Task' });
+      const shape = elementFactory.createShape({ type: 'bpmn:ScriptTask' });
       shape.businessObject.name = 'Get Weight';
 
       shape.businessObject.id = 'Activity_Get_Weight_' + generateRandomString(7);
 
-      var selectedProperty = bpmnFactory.create('camunda:Property', {
+      var selectedProperty1 = bpmnFactory.create('camunda:Property', {
         name: 'absoluteWeightThreshold',
         value: WEIGHT_THRESHOLD
+      });
+
+      var selectedProperty2 = bpmnFactory.create('camunda:Property', {
+        name: 'noOfDaysHigherThreshold',
+        value: NO_DAYS_THRESHOLD
+      });
+
+      var properties = bpmnFactory.create('camunda:Properties', {
+        values: [selectedProperty1, selectedProperty2]
+      });
+
+      shape.businessObject.extensionElements = shape.businessObject.extensionElements || bpmnFactory.create('bpmn:ExtensionElements', {
+        values: [properties]
+      });
+
+      shape.businessObject.scriptFormat = "Javascript";
+      shape.businessObject.script =
+        'execution.setVariable("weightOver",true);';
+
+      create.start(event, shape);
+    }
+
+    function createSetUserStateTask(event) {
+
+      const shape = elementFactory.createShape({ type: 'bpmn:Task' });
+      shape.businessObject.name = 'Set User State';
+
+      shape.businessObject.id = 'Activity_Set_User_State_' + generateRandomString(7);
+
+      var selectedProperty = bpmnFactory.create('camunda:Property', {
+        name: 'userState',
+        value: 'Healthy'
       });
 
       var properties = bpmnFactory.create('camunda:Properties', {
         values: [selectedProperty]
       });
 
-      shape.businessObject.extensionElements = shape.businessObject.extensionElements || bpmnFactory.create('bpmn:ExtensionElements');
-      shape.businessObject.extensionElements.get('values').push(properties);
-
-      var camundaProp = findExtension(shape.businessObject.extensionElements, 'camunda:Properties');
-
-      // ExtensionElementsHelper.addEntry(shape.businessObject, null, { 'suitable': '0.7' }, BpmnFactory);
-      // const property = moddle.create("camunda:properties");
-
-      // create the custom element (according to our json config)
-      // const pocUser = moddle.create("poc:User");
-      // pocUser.name = "Max";
-
-      // put the custom element into the extensionElements
-      // extensionElements.set("values", property);
-      // console.log(extensionElements);
-
-      // shape.businessObject.set("extensionElements", extensionElements);
-
-      // console.log(shape.businessObject.extensionElements.get("values"));
+      shape.businessObject.extensionElements = shape.businessObject.extensionElements || bpmnFactory.create('bpmn:ExtensionElements', {
+        values: [properties]
+      });
 
       create.start(event, shape);
     }
@@ -91,6 +98,15 @@ export default class CustomPalette {
           click: createGetWeightTask
         }
       },
+      'create.set-user-state-task': {
+        group: 'activity',
+        className: 'bpmn-icon-task',
+        title: translate('Create SetUserStateTask'),
+        action: {
+          dragstart: createSetUserStateTask,
+          click: createSetUserStateTask
+        }
+      }
     }
   }
 }
