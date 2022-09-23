@@ -59,8 +59,9 @@ var connectorDetails = require('./parts/ConnectorDetailProps'),
 // properties
 var properties = require('./parts/PropertiesProps');
 
-//userState
-var userState = require('../../../../../custom/UserStateSettings.js');
+//userState and check Measurement
+var userState = require('../../../../../custom/UserStateSettings.js'),
+    checkMeasurement = require('../../../../../custom/CheckMeasurementSettings.js');
 
 // job configuration
 var jobConfiguration = require('./parts/JobConfigurationProps');
@@ -523,9 +524,20 @@ function createExtensionElementsGroups(element, bpmnFactory, elementRegistry, tr
   //Add the custom props to the userStateGroup
   userState(userStateGroup, element, bpmnFactory, translate);
 
+  //Create a group called Check Measurement Settings"
+  var checkMeasurementGroup = {
+    id: 'extenstionElements-checkMeasurementSettings',
+    label: translate('Check Measurement Settings'),
+    entries: []
+  }
+
+  //Add the custom props to the checkMeasurementGroup
+  checkMeasurement(checkMeasurementGroup, element, bpmnFactory, translate);
+
   return [
     propertiesGroup,
-    userStateGroup
+    userStateGroup,
+    checkMeasurementGroup
   ];
 }
 

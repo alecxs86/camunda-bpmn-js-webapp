@@ -111,6 +111,10 @@ PropertiesActivator.prototype.isEntryVisible = function (element, entry, group, 
             return false;
             break;
           }
+          if ((is(element, 'bpmn:ScriptTask' )) && (getBusinessObject(element).name == 'Check Measurement')) {
+            return false;
+            break;
+          }
         default:
           return true;  
       }

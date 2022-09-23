@@ -37,35 +37,81 @@ export default class CustomContextPad {
       return randomString;
     };
 
-    function appendGetWeightTask(event, element) {
+    function appendCheckMeasurementTask(event, element) {
       if (autoPlace) {
-        const shape = elementFactory.createShape({ type: 'bpmn:Task' });
-        shape.businessObject.name = 'Get Weight';
+        const shape = elementFactory.createShape({ type: 'bpmn:ScriptTask' });
+        shape.businessObject.name = 'Check Measurement';
 
-        shape.businessObject.id = 'Activity_Get_Weight_' + generateRandomString(7);
+        shape.businessObject.id = 'Activity_Check_Measurement_' + generateRandomString(7);
+
         var selectedProperty1 = bpmnFactory.create('camunda:Property', {
-          name: 'absoluteWeightThreshold',
-          value: WEIGHT_THRESHOLD
+          name: 'measurementType',
+          value: 'weight' //weight, blood pressure
         });
 
         var selectedProperty2 = bpmnFactory.create('camunda:Property', {
-          name: 'noOfDaysHigherThreshold',
-          value: NO_DAYS_THRESHOLD
+          name: 'measurementThreshold',
+          value: '55' // assume kg
+        });
+
+        var selectedProperty3 = bpmnFactory.create('camunda:Property', {
+          name: 'thresholdType',
+          value: 'higher' // will output true for measurementType higher than measurementThreshold
+        });
+
+        var selectedProperty4 = bpmnFactory.create('camunda:Property', {
+          name: 'measurementNoOfDays', // no of days for which the threshold should be compared against
+          value: '3' //
         });
 
         var properties = bpmnFactory.create('camunda:Properties', {
-          values: [selectedProperty1, selectedProperty2]
+          values: [selectedProperty1, selectedProperty2, selectedProperty3, selectedProperty4]
         });
 
         shape.businessObject.extensionElements = shape.businessObject.extensionElements || bpmnFactory.create('bpmn:ExtensionElements', {
           values: [properties]
         });
 
+        shape.businessObject.scriptFormat = "Javascript";
+        shape.businessObject.script = // will modify this according to the variables taken from camunda:properties // or will we do this in the processor code?
+          'execution.setVariable("measurementCompareThreshold",true);';
+
         autoPlace.append(element, shape);
       } else {
-        appendGetWeightTaskStart(event, element);
+        appendCheckMeasurementTaskStart(event, element);
       }
     }
+
+
+    // function appendGetWeightTask(event, element) {
+    //   if (autoPlace) {
+    //     const shape = elementFactory.createShape({ type: 'bpmn:Task' });
+    //     shape.businessObject.name = 'Get Weight';
+
+    //     shape.businessObject.id = 'Activity_Get_Weight_' + generateRandomString(7);
+    //     var selectedProperty1 = bpmnFactory.create('camunda:Property', {
+    //       name: 'absoluteWeightThreshold',
+    //       value: WEIGHT_THRESHOLD
+    //     });
+
+    //     var selectedProperty2 = bpmnFactory.create('camunda:Property', {
+    //       name: 'noOfDaysHigherThreshold',
+    //       value: NO_DAYS_THRESHOLD
+    //     });
+
+    //     var properties = bpmnFactory.create('camunda:Properties', {
+    //       values: [selectedProperty1, selectedProperty2]
+    //     });
+
+    //     shape.businessObject.extensionElements = shape.businessObject.extensionElements || bpmnFactory.create('bpmn:ExtensionElements', {
+    //       values: [properties]
+    //     });
+
+    //     autoPlace.append(element, shape);
+    //   } else {
+    //     appendGetWeightTaskStart(event, element);
+    //   }
+    // }
 
     function appendSetUserStateTask(event, element) {
       if (autoPlace) {
@@ -94,32 +140,73 @@ export default class CustomContextPad {
       }
     }
 
-    function appendGetWeightTaskStart(event) {
+    function appendCheckMeasurementTaskStart(event) {
+      const shape = elementFactory.createShape({ type: 'bpmn:ScriptTask' });
+      shape.businessObject.name = 'Check Measurement';
 
-      const shape = elementFactory.createShape({ type: 'bpmn:Task' });
-      shape.businessObject.name = 'Get Weight';
+      shape.businessObject.id = 'Activity_Check_Measurement_' + generateRandomString(7);
 
-      shape.businessObject.id = 'Activity_Get_Weight_' + generateRandomString(7);
       var selectedProperty1 = bpmnFactory.create('camunda:Property', {
-        name: 'absoluteWeightThreshold',
-        value: WEIGHT_THRESHOLD
+        name: 'measurementType',
+        value: 'weight' //weight, blood pressure
       });
 
       var selectedProperty2 = bpmnFactory.create('camunda:Property', {
-        name: 'noOfDaysHigherThreshold',
-        value: NO_DAYS_THRESHOLD
+        name: 'measurementThreshold',
+        value: '55' // assume kg
+      });
+
+      var selectedProperty3 = bpmnFactory.create('camunda:Property', {
+        name: 'thresholdType',
+        value: 'higher' // will output true for measurementType higher than measurementThreshold
+      });
+
+      var selectedProperty4 = bpmnFactory.create('camunda:Property', {
+        name: 'measurementNoOfDays', // no of days for which the threshold should be compared against
+        value: '3' //
       });
 
       var properties = bpmnFactory.create('camunda:Properties', {
-        values: [selectedProperty1, selectedProperty2]
+        values: [selectedProperty1, selectedProperty2, selectedProperty3, selectedProperty4]
       });
 
       shape.businessObject.extensionElements = shape.businessObject.extensionElements || bpmnFactory.create('bpmn:ExtensionElements', {
         values: [properties]
       });
 
+      shape.businessObject.scriptFormat = "Javascript";
+      shape.businessObject.script = // will modify this according to the variables taken from camunda:properties // or will we do this in the processor code?
+        'execution.setVariable("measurementCompareThreshold",true);';
+
       create.start(event, shape, element);
     }
+
+    // function appendGetWeightTaskStart(event) {
+
+    //   const shape = elementFactory.createShape({ type: 'bpmn:Task' });
+    //   shape.businessObject.name = 'Get Weight';
+
+    //   shape.businessObject.id = 'Activity_Get_Weight_' + generateRandomString(7);
+    //   var selectedProperty1 = bpmnFactory.create('camunda:Property', {
+    //     name: 'absoluteWeightThreshold',
+    //     value: WEIGHT_THRESHOLD
+    //   });
+
+    //   var selectedProperty2 = bpmnFactory.create('camunda:Property', {
+    //     name: 'noOfDaysHigherThreshold',
+    //     value: NO_DAYS_THRESHOLD
+    //   });
+
+    //   var properties = bpmnFactory.create('camunda:Properties', {
+    //     values: [selectedProperty1, selectedProperty2]
+    //   });
+
+    //   shape.businessObject.extensionElements = shape.businessObject.extensionElements || bpmnFactory.create('bpmn:ExtensionElements', {
+    //     values: [properties]
+    //   });
+
+    //   create.start(event, shape, element);
+    // }
 
     function appendSetUserStateTaskStart(event) {
 
@@ -141,19 +228,28 @@ export default class CustomContextPad {
         values: [properties]
       });
 
-      create.start(event, shape);
+      create.start(event, shape, element);
     }
 
     return {
-      'append.getweight-task': {
+      'append.checkmeasurement-task': {
         group: 'model',
         className: 'bpmn-icon-task',
-        title: translate('Append GetWeightTask'),
+        title: translate('Append CheckMeasurementTask'),
         action: {
-          click: appendGetWeightTask,
-          dragstart: appendGetWeightTaskStart
+          click: appendCheckMeasurementTask,
+          dragstart: appendCheckMeasurementTaskStart
         }
       },
+      // 'append.getweight-task': {
+      //   group: 'model',
+      //   className: 'bpmn-icon-task',
+      //   title: translate('Append GetWeightTask'),
+      //   action: {
+      //     click: appendGetWeightTask,
+      //     dragstart: appendGetWeightTaskStart
+      //   }
+      // },
       'append.setuserstate-task': {
         group: 'model',
         className: 'bpmn-icon-task',
