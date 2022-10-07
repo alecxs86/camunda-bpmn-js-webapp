@@ -11,7 +11,8 @@ var getBusinessObject = require('bpmn-js/lib/util/ModelUtil').getBusinessObject;
 var find = require('lodash/collection').find;
 
 var selectMeasurementValues = require('./measurementSelect.json');
-var selectThresholdTypeValues = require('./thresholdTypeSelect.json');
+var selectThresholdTypeValues =require('./thresholdTypeSelect.json');
+var checkMeasurementSetting = require('./CheckMeasurementSettings');
 
 function findCamundaProperty(camundaProperties, binding) {
   return find(camundaProperties.get('values'), function (p) {
@@ -54,15 +55,24 @@ module.exports = function (group, element, bpmnFactory, translate) {
     var elements = bo.get('extensionElements');
     if (elements != null) {
       var camundaProperties = findExtension(elements, 'camunda:Properties');
-      camundaProperties = camundaProperties.values.filter(function (element) {
-        if (element.name === propertyName) {
-          return element;
-        }
-      });
+      var measurementType = findCamundaProperty(camundaProperties, { 'name': 'measurementType' });
     }
-    if (camundaProperties != null && camundaProperties.length > 0) {
+    if (measurementType != null) {
       var returnValue = {};
-      returnValue[propertyName] = camundaProperties[0].value;
+
+      switch (measurementType.value) {
+        case 'Weight':
+          returnValue[propertyName] = 'weight';
+          break;
+        case 'Blood Pressure':
+          returnValue[propertyName] = 'bloodPres';
+          break;
+        case 'Number of Steps':
+          returnValue[propertyName] = 'noSteps';
+          break;
+        default:
+          returnValue[propertyName] = '';
+      }
       return returnValue;
     } else {
       return '';
@@ -71,7 +81,9 @@ module.exports = function (group, element, bpmnFactory, translate) {
 
   var setElementValue = function (element, values, node, propertyName) {
     var bo = getBusinessObject(element);
-    var entry = values;
+    // var entry = values; // here we need to change values into something we need
+   
+
     var extensionElements = bo.get('extensionElements');
     var updates = [];
     if (!extensionElements) {
@@ -88,10 +100,20 @@ module.exports = function (group, element, bpmnFactory, translate) {
         element, extensionElements, 'values', [camundaProperties]
       ));
     }
+    
     var existingCamundaProperty = findCamundaProperty(camundaProperties, { 'name': propertyName });
     if (values != null && values[propertyName] != null) {
       values = values[propertyName];
     }
+    console.log(values);
+
+    // works but cannot be called because we make the textBox read only
+    // var measurementType = findCamundaProperty(camundaProperties, { 'name': 'measurementType' });
+    // console.log(measurementType.value);
+    // if (measurementType != null) {
+    //   values = measurementType.value;
+    // }
+
     var camundaProperty = bpmnFactory.create('camunda:Property', {
       name: propertyName,
       value: values || ''
@@ -140,26 +162,9 @@ module.exports = function (group, element, bpmnFactory, translate) {
 
   // create a selectBox only if the activity type is "Check Measurement" -- can be modified to suit any purpose
   if ((is(element, 'bpmn:Task')) && (getBusinessObject(element).name == 'Check Measurement')) {
-    group.entries.push(createSelectBox(
-      'measurementType',
-      'Measurement Type',
-      selectMeasurementValues,
-      translate
-    ));
     group.entries.push(createTextField(
-      'measurementThreshold',
-      'Measurement Threshold',
-      translate
-    ));
-    group.entries.push(createSelectBox(
-      'thresholdType',
-      'Threshold Type',
-      selectThresholdTypeValues,
-      translate
-    ));
-    group.entries.push(createTextField(
-      'measurementNoOfDays',
-      'Number of days crossing the threshold',
+      'measurementOutput',
+      'Measurement Output Variable',
       translate
     ));
   }

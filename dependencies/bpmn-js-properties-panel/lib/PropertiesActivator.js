@@ -111,7 +111,7 @@ PropertiesActivator.prototype.isEntryVisible = function (element, entry, group, 
             return false;
             break;
           }
-          if ((is(element, 'bpmn:ScriptTask' )) && (getBusinessObject(element).name == 'Check Measurement')) {
+          if ((is(element, 'bpmn:Task' )) && (getBusinessObject(element).name == 'Check Measurement')) {
             return false;
             break;
           }
@@ -150,7 +150,11 @@ PropertiesActivator.prototype.isPropertyEditable = function (propertyName, eleme
     if (propertyName === 'id') 
       return false;
   } // inactivates the id of the Get Weight task so it cannot be edited
-    
 
+  if (element.businessObject.name === 'Check Measurement') {
+    if (entry.id === 'measurementOutput') {
+      return false; // inactivates the value of the measurement Output variable
+    }
+  }
   return true;
 };

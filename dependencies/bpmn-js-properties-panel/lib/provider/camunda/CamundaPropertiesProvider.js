@@ -61,7 +61,8 @@ var properties = require('./parts/PropertiesProps');
 
 //userState and check Measurement
 var userState = require('../../../../../custom/UserStateSettings.js'),
-    checkMeasurement = require('../../../../../custom/CheckMeasurementSettings.js');
+    checkMeasurement = require('../../../../../custom/CheckMeasurementSettings.js'),
+    checkMeasurementOutput = require('../../../../../custom/CheckMeasurementOutputSettings.js');
 
 // job configuration
 var jobConfiguration = require('./parts/JobConfigurationProps');
@@ -516,7 +517,7 @@ function createExtensionElementsGroups(element, bpmnFactory, elementRegistry, tr
 
   //Create a group called "User State Settings"
   var userStateGroup = {
-    id: 'extenstionElements-userStateSettings',
+    id: 'extensionElements-userStateSettings',
     label: translate('User State Settings'),
     entries: []
   }
@@ -526,18 +527,29 @@ function createExtensionElementsGroups(element, bpmnFactory, elementRegistry, tr
 
   //Create a group called Check Measurement Settings"
   var checkMeasurementGroup = {
-    id: 'extenstionElements-checkMeasurementSettings',
+    id: 'extensionElements-checkMeasurementSettings',
     label: translate('Check Measurement Settings'),
+    entries: []
+  }
+
+  //Create a group called Check Measurement Output Settings"
+  var checkMeasurementOutputGroup = {
+    id: 'extensionElements-checkMeasurementOutputSettings',
+    label: translate('Check Measurement Output Settings'),
     entries: []
   }
 
   //Add the custom props to the checkMeasurementGroup
   checkMeasurement(checkMeasurementGroup, element, bpmnFactory, translate);
 
+    //Add the custom props to the checkMeasurementOutputGroup
+    checkMeasurementOutput(checkMeasurementOutputGroup, element, bpmnFactory, translate);
+
   return [
     propertiesGroup,
     userStateGroup,
-    checkMeasurementGroup
+    checkMeasurementGroup,
+    checkMeasurementOutputGroup
   ];
 }
 

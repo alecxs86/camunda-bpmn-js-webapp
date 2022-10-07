@@ -4,10 +4,11 @@ const WEIGHT_THRESHOLD = 55;
 const NO_DAYS_THRESHOLD = 3;
 
 export default class CustomPalette {
-  constructor(bpmnFactory, create, elementFactory, palette, translate) {
+  constructor(bpmnFactory, create, elementFactory, palette, modeling, translate) {
     this.bpmnFactory = bpmnFactory;
     this.create = create;
     this.elementFactory = elementFactory;
+    this.modeling = modeling;
     this.translate = translate;
 
     palette.registerProvider(this);
@@ -18,6 +19,7 @@ export default class CustomPalette {
       bpmnFactory,
       create,
       elementFactory,
+      modeling,
       translate
     } = this
 
@@ -35,7 +37,7 @@ export default class CustomPalette {
 
     function createCheckMeasurementTask(event) { // change into get or check measurement
 
-      const shape = elementFactory.createShape({ type: 'bpmn:ScriptTask' });
+      const shape = elementFactory.createShape({ type: 'bpmn:Task' });
       shape.businessObject.name = 'Check Measurement';
 
       shape.businessObject.id = 'Activity_Check_Measurement_' + generateRandomString(7);
@@ -60,28 +62,23 @@ export default class CustomPalette {
         value: '3' //
       });
 
-      var properties = bpmnFactory.create('camunda:Properties', {
-        values: [selectedProperty1, selectedProperty2, selectedProperty3, selectedProperty4]
+      var selectedProperty5 = bpmnFactory.create('camunda:Property', {
+        name: 'measurementOutput', // no of days for which the threshold should be compared against
+        value: 'weight' //
       });
+
+      var properties = bpmnFactory.create('camunda:Properties', {
+        values: [selectedProperty1, selectedProperty2, selectedProperty3, selectedProperty4, selectedProperty5]
+      });
+
+      var strokeColor = 'black';
+      var fillColor = 'red';
 
       shape.businessObject.extensionElements = shape.businessObject.extensionElements || bpmnFactory.create('bpmn:ExtensionElements', {
         values: [properties]
       });
 
-      shape.businessObject.scriptFormat = "Javascript";
-      shape.businessObject.script = // will modify this according to the variables taken from camunda:properties // or will we do this in the processor code?
-        'execution.setVariable("measurementType","nothing");';
-
-//         var modelInstance = execution.getBpmnModelInstance();
-//   var elementInstance = modelInstance.getModelElementById('Activity_Check_Measurement_kqAHFPp'); // have to figure out how to replace this with the actual name
-//   var extensionElements = elementInstance.getExtensionElements().getElementsQuery().filterByType(Java.type('org.camunda.bpm.model.bpmn.instance.camunda.CamundaProperties').class).singleResult().getCamundaProperties().toArray();
-
-// var measurementThr = extensionElements[0].getCamundaValue().toString();
-// if(measurementThr == 55) { // some condition here
-// execution.setVariable("changeState",true);
-// } else {
-// execution.setVariable("changeState",false);
-// }
+      modeling.setColor(shape, {stroke: strokeColor, fill: fillColor});
 
       create.start(event, shape);
     }
@@ -135,9 +132,14 @@ export default class CustomPalette {
         values: [selectedProperty]
       });
 
+      var strokeColor = 'black';
+      var fillColor = 'red';
+
       shape.businessObject.extensionElements = shape.businessObject.extensionElements || bpmnFactory.create('bpmn:ExtensionElements', {
         values: [properties]
       });
+
+      modeling.setColor(shape, {stroke: strokeColor, fill: fillColor});
 
       create.start(event, shape);
     }
@@ -179,5 +181,6 @@ CustomPalette.$inject = [
   'create',
   'elementFactory',
   'palette',
+  'modeling',
   'translate'
 ];
