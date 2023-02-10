@@ -91,6 +91,7 @@
     "sinon": "^9.2.4",
     "sinon-chai": "^3.5.0",
     "sirv-cli": "^1.0.10",
-    "source-map-loader": "^1.0.0"
+    "source-map-loader": "^1.0.0",
+    "url-loader": "^4.1.1"
   }
 }

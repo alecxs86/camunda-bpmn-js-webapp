@@ -7,12 +7,19 @@ var elementHelper = require('bpmn-js-properties-panel/lib/helper/ElementHelper')
 var extensionElementsHelper = require('bpmn-js-properties-panel/lib/helper/ExtensionElementsHelper');
 var extensionElements = require('bpmn-js-properties-panel/lib/provider/camunda/parts/implementation/ExtensionElements');
 var is = require('bpmn-js/lib/util/ModelUtil').is;
+var isAny = require('bpmn-js/lib/features/modeling/util/ModelingUtil').isAny;
 var getBusinessObject = require('bpmn-js/lib/util/ModelUtil').getBusinessObject;
 var find = require('lodash/collection').find;
 
-var selectMeasurementValues = require('./measurementSelect.json');
-var selectThresholdTypeValues =require('./thresholdTypeSelect.json');
-var checkMeasurementSetting = require('./CheckMeasurementSettings');
+var selectValues = require('./thresholdTypeSelect.json'),/**
+    selectQuestionnaireValues = require('./questionnaireSelect.json'),
+    selectQuestionnaireAssessmentValues = require('./questionnaireAssessmentSelect.json'),
+    selectActionValues = require('./actionSelect.json'),
+    selectAssessQuestionnaireIdValues = require('./asessQuestionnaireIdSelect.json'),*/
+    selectQuestionValues = require('./questionsSelect.json')/**,
+    selectUserStateValues = require('./userStateSelect.json') ,
+    selectCondition = require('./thresholdTypeSelect.json') */;
+
 
 function findCamundaProperty(camundaProperties, binding) {
   return find(camundaProperties.get('values'), function (p) {
@@ -55,24 +62,15 @@ module.exports = function (group, element, bpmnFactory, translate) {
     var elements = bo.get('extensionElements');
     if (elements != null) {
       var camundaProperties = findExtension(elements, 'camunda:Properties');
-      var measurementType = findCamundaProperty(camundaProperties, { 'name': 'measurementType' });
+      camundaProperties = camundaProperties.values.filter(function (element) {
+        if (element.name === propertyName) {
+          return element;
+        }
+      });
     }
-    if (measurementType != null) {
+    if (camundaProperties != null && camundaProperties.length > 0) {
       var returnValue = {};
-
-      switch (measurementType.value) {
-        case 'Weight':
-          returnValue[propertyName] = 'weight';
-          break;
-        case 'Blood Pressure':
-          returnValue[propertyName] = 'bloodPres';
-          break;
-        case 'Number of Steps':
-          returnValue[propertyName] = 'noSteps';
-          break;
-        default:
-          returnValue[propertyName] = '';
-      }
+      returnValue[propertyName] = camundaProperties[0].value;
       return returnValue;
     } else {
       return '';
@@ -81,9 +79,7 @@ module.exports = function (group, element, bpmnFactory, translate) {
 
   var setElementValue = function (element, values, node, propertyName) {
     var bo = getBusinessObject(element);
-    // var entry = values; // here we need to change values into something we need
-   
-
+    var entry = values;
     var extensionElements = bo.get('extensionElements');
     var updates = [];
     if (!extensionElements) {
@@ -100,20 +96,10 @@ module.exports = function (group, element, bpmnFactory, translate) {
         element, extensionElements, 'values', [camundaProperties]
       ));
     }
-    
     var existingCamundaProperty = findCamundaProperty(camundaProperties, { 'name': propertyName });
     if (values != null && values[propertyName] != null) {
       values = values[propertyName];
     }
-    console.log(values);
-
-    // works but cannot be called because we make the textBox read only
-    // var measurementType = findCamundaProperty(camundaProperties, { 'name': 'measurementType' });
-    // console.log(measurementType.value);
-    // if (measurementType != null) {
-    //   values = measurementType.value;
-    // }
-
     var camundaProperty = bpmnFactory.create('camunda:Property', {
       name: propertyName,
       value: values || ''
@@ -130,10 +116,10 @@ module.exports = function (group, element, bpmnFactory, translate) {
   };
 
   // not used for the moment, but may be useful in the future
-  var createTextField = function (id, label, translate) {
+  var createTextField = function (id, description, label, ranslate) {
     return entryFactory.textField(translate, {
       id: id,
-      description: label,
+      description: description,
       label: label,
       modelProperty: id,
       get: function (element, node) {
@@ -160,12 +146,49 @@ module.exports = function (group, element, bpmnFactory, translate) {
     });
   };
 
-  // create a selectBox only if the activity type is "Check Measurement" -- can be modified to suit any purpose
-  if ((is(element, 'bpmn:Task')) && (getBusinessObject(element).name == 'Check Measurement')) {
-    group.entries.push(createTextField(
-      'measurementOutput',
-      'Measurement Output Variable',
+  console.log(is(element, 'bpmn:SequenceFlow'));
+  if (is(element, 'bpmn:SequenceFlow')) {
+    console.log(element);
+    console.log(element.source);
+    console.log(isConditionalSource(element.source));
+  }
+  // create a selectBox only if the is "Sequence Flow" -- can be modified to suit any purpose
+  if (is(element, 'bpmn:SequenceFlow') && isConditionalSource(element.source)) {
+    group.entries.push(createSelectBox(
+      'questionAnswer',
+      'Question Answer',
+      selectQuestionValues,
       translate
     ));
-  }
+    
+    group.entries.push(createSelectBox(
+      'thresholdType',
+      'Threshold Type',
+      selectValues,
+      translate
+    ));
+
+    group.entries.push(createTextField(
+      'thresholdValue',
+      'Fill in the value',
+      'Value',
+      translate
+    ))
+
+    };
+
+
+};
+
+    // utilities //////////////////////////
+
+var CONDITIONAL_SOURCES = [
+    // 'bpmn:Activity',
+    'bpmn:ExclusiveGateway',
+    'bpmn:InclusiveGateway',
+    'bpmn:ComplexGateway'
+];
+  
+function isConditionalSource(element) {
+    return isAny(element, CONDITIONAL_SOURCES);
 }

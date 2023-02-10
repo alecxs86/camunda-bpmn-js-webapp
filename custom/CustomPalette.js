@@ -35,141 +35,50 @@ export default class CustomPalette {
       return randomString;
     };
 
-    function createCheckMeasurementTask(event) { // change into get or check measurement
+    function createClinicalPathwayTask(event) {
 
-      const shape = elementFactory.createShape({ type: 'bpmn:Task' });
-      shape.businessObject.name = 'Check Measurement';
+      const shape = elementFactory.createShape({ type: 'bpmn:ServiceTask' });
+      shape.businessObject.name = 'Pathway Action';
 
-      shape.businessObject.id = 'Activity_Check_Measurement_' + generateRandomString(7);
+      shape.businessObject.id = 'Activity_Clinical_Pathway_' + generateRandomString(7);
+
+      shape.businessObject['type'] = 'external';
+      shape.businessObject['topic'] = 'questionnaireSend'; //this will be updated dynamically when selecting other type of box behaviour
 
       var selectedProperty1 = bpmnFactory.create('camunda:Property', {
-        name: 'measurementType',
-        value: 'weight' //weight, blood pressure
+        name: 'clinicalPathwayTaskType',
+        value: 'Send Questionnaire'
       });
-
+ 
       var selectedProperty2 = bpmnFactory.create('camunda:Property', {
-        name: 'measurementThreshold',
-        value: '55' // assume kg
+        name: 'clinicalPathwayTaskOption',
+        value: 'DAILYSYMPTOMQUEST'
       });
 
       var selectedProperty3 = bpmnFactory.create('camunda:Property', {
-        name: 'thresholdType',
-        value: 'higher' // will output true for measurementType higher than measurementThreshold
+        name: 'clinicalPathwayTaskID',
+        value: 'fQ6n0l5'
       });
-
-      var selectedProperty4 = bpmnFactory.create('camunda:Property', {
-        name: 'measurementNoOfDays', // no of days for which the threshold should be compared against
-        value: '3' //
-      });
-
-      var selectedProperty5 = bpmnFactory.create('camunda:Property', {
-        name: 'measurementOutput', // no of days for which the threshold should be compared against
-        value: 'weight' //
-      });
-
+ 
       var properties = bpmnFactory.create('camunda:Properties', {
-        values: [selectedProperty1, selectedProperty2, selectedProperty3, selectedProperty4, selectedProperty5]
+        values: [selectedProperty1, selectedProperty2, selectedProperty3]
       });
-
-      var strokeColor = 'black';
-      var fillColor = 'red';
 
       shape.businessObject.extensionElements = shape.businessObject.extensionElements || bpmnFactory.create('bpmn:ExtensionElements', {
         values: [properties]
       });
 
-      modeling.setColor(shape, {stroke: strokeColor, fill: fillColor});
-
       create.start(event, shape);
     }
 
-    
-    // function createGetWeightTask(event) { // change into get or check measurement
-
-    //   const shape = elementFactory.createShape({ type: 'bpmn:ScriptTask' });
-    //   shape.businessObject.name = 'Get Weight';
-
-    //   shape.businessObject.id = 'Activity_Get_Weight_' + generateRandomString(7);
-
-    //   var selectedProperty1 = bpmnFactory.create('camunda:Property', {
-    //     name: 'absoluteWeightThreshold',
-    //     value: WEIGHT_THRESHOLD
-    //   });
-
-    //   var selectedProperty2 = bpmnFactory.create('camunda:Property', {
-    //     name: 'noOfDaysHigherThreshold',
-    //     value: NO_DAYS_THRESHOLD
-    //   });
-
-    //   var properties = bpmnFactory.create('camunda:Properties', {
-    //     values: [selectedProperty1, selectedProperty2]
-    //   });
-
-    //   shape.businessObject.extensionElements = shape.businessObject.extensionElements || bpmnFactory.create('bpmn:ExtensionElements', {
-    //     values: [properties]
-    //   });
-
-    //   shape.businessObject.scriptFormat = "Javascript";
-    //   shape.businessObject.script =
-    //     'execution.setVariable("weightOver",true);';
-
-    //   create.start(event, shape);
-    // }
-
-    function createSetUserStateTask(event) {
-
-      const shape = elementFactory.createShape({ type: 'bpmn:Task' });
-      shape.businessObject.name = 'Set User State';
-
-      shape.businessObject.id = 'Activity_Set_User_State_' + generateRandomString(7);
-
-      var selectedProperty = bpmnFactory.create('camunda:Property', {
-        name: 'userState',
-        value: 'Healthy'
-      });
-
-      var properties = bpmnFactory.create('camunda:Properties', {
-        values: [selectedProperty]
-      });
-
-      var strokeColor = 'black';
-      var fillColor = 'red';
-
-      shape.businessObject.extensionElements = shape.businessObject.extensionElements || bpmnFactory.create('bpmn:ExtensionElements', {
-        values: [properties]
-      });
-
-      modeling.setColor(shape, {stroke: strokeColor, fill: fillColor});
-
-      create.start(event, shape);
-    }
-    
-    return {
-      'create.check-measurement-task': {
+    return { 
+      'create.clinical-pathway-task': {
         group: 'activity',
         className: 'bpmn-icon-task',
-        title: translate('Create CheckMeasurementTask'),
+        title: translate('Create PathwayActionTask'),
         action: {
-          dragstart: createCheckMeasurementTask,
-          click: createCheckMeasurementTask
-        }
-      },
-      // 'create.get-weight-task': {
-      //   group: 'activity',
-      //   className: 'bpmn-icon-task',
-      //   title: translate('Create GetWeightTask'),
-      //   action: {
-      //     dragstart: createGetWeightTask,
-      //     click: createGetWeightTask
-      //   }
-      // },
-      'create.set-user-state-task': {
-        group: 'activity',
-        className: 'bpmn-icon-task',
-        title: translate('Create SetUserStateTask'),
-        action: {
-          dragstart: createSetUserStateTask,
-          click: createSetUserStateTask
+          dragstart: createClinicalPathwayTask,
+          click: createClinicalPathwayTask
         }
       }
     }

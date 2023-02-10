@@ -10,8 +10,14 @@ var is = require('bpmn-js/lib/util/ModelUtil').is;
 var getBusinessObject = require('bpmn-js/lib/util/ModelUtil').getBusinessObject;
 var find = require('lodash/collection').find;
 
-var selectMeasurementValues = require('./measurementSelect.json');
-var selectThresholdTypeValues = require('./thresholdTypeSelect.json');
+var selectValues = require('./clinicalPathwayTypeSelect.json'),
+    selectQuestionnaireValues = require('./questionnaireSelect.json'),
+    selectQuestionnaireAssessmentValues = require('./questionnaireAssessmentSelect.json'),
+    selectActionValues = require('./actionSelect.json'),
+    selectAssessQuestionnaireIdValues = require('./asessQuestionnaireIdSelect.json'),
+    selectQuestionValues = require('./questionsSelect.json'),
+    selectUserStateValues = require('./userStateSelect.json');
+
 
 function findCamundaProperty(camundaProperties, binding) {
   return find(camundaProperties.get('values'), function (p) {
@@ -108,11 +114,12 @@ module.exports = function (group, element, bpmnFactory, translate) {
   };
 
   // not used for the moment, but may be useful in the future
-  var createTextField = function (id, label, translate) {
+  var createTextField = function (id, description, label, ranslate) {
     return entryFactory.textField(translate, {
       id: id,
-      description: label,
+      description: description,
       label: label,
+      // label: 'Questionnaire ID',
       modelProperty: id,
       get: function (element, node) {
         return getElementValue(element, node, id);
@@ -138,29 +145,96 @@ module.exports = function (group, element, bpmnFactory, translate) {
     });
   };
 
-  // create a selectBox only if the activity type is "Check Measurement" -- can be modified to suit any purpose
-  if ((is(element, 'bpmn:Task')) && (getBusinessObject(element).name == 'Check Measurement')) {
+  // create a selectBox only if the activity type is "Clinical Pathway" -- can be modified to suit any purpose
+  if ((is(element, 'bpmn:ServiceTask')) && (getBusinessObject(element).id.startsWith('Activity_Clinical_Pathway_'))) {
     group.entries.push(createSelectBox(
-      'measurementType',
-      'Measurement Type',
-      selectMeasurementValues,
+      'clinicalPathwayTaskType',
+      'Clinical Pathway Type',
+      selectValues,
       translate
     ));
-    group.entries.push(createTextField(
-      'measurementThreshold',
-      'Measurement Threshold',
-      translate
-    ));
+
+    var displayText = 'Questionnaire Type';
+    var selectDynamicValues = [selectQuestionnaireValues, selectQuestionnaireAssessmentValues, selectActionValues];
+    var action = selectDynamicValues[0];
+
+    var camundaProperties = findExtension(getBusinessObject(element).extensionElements, 'camunda:Properties');
+  
+    console.log(camundaProperties);
+    if (camundaProperties != null) {
+      var camundaProperty = findCamundaProperty(camundaProperties, { 'name': 'clinicalPathwayTaskType' });
+      switch (camundaProperty.value) {
+        case 'Send Questionnaire':
+          displayText = 'Questionnaire Type';
+          action = selectDynamicValues[0];
+          break;
+        case 'Assess Questionnaire':
+          displayText = 'Score Check Type';
+          action = selectDynamicValues[1];
+          break;
+        case 'Take Action':
+          displayText = 'Action Type';
+          action = selectDynamicValues[2];
+          break;
+        default:
+          break;
+      }
+      
+    }
+    
+    if (camundaProperties != null) {
+      var camundaProperty = findCamundaProperty(camundaProperties, { 'name': 'clinicalPathwayTaskType' });
+      if (camundaProperty.value === 'Assess Questionnaire') {
+        group.entries.push(createSelectBox(
+          'assessQuestionnaireID',
+          'Questionnaire ID to assess',
+          selectAssessQuestionnaireIdValues,
+          translate
+        ))
+      }
+    }
+
     group.entries.push(createSelectBox(
-      'thresholdType',
-      'Threshold Type',
-      selectThresholdTypeValues,
+      'clinicalPathwayTaskOption',
+      displayText,
+      action,
       translate
     ));
-    group.entries.push(createTextField(
-      'measurementNoOfDays',
-      'Number of days crossing the threshold',
-      translate
-    ));
+
+    if (camundaProperties != null) {
+      var camundaProperty = findCamundaProperty(camundaProperties, { 'name': 'clinicalPathwayTaskType' });
+      if (camundaProperty.value === 'Send Questionnaire') {
+        group.entries.push(createTextField(
+          'clinicalPathwayTaskID',
+          'Fill in the unique ID of the questionnaire',
+          'Questionnaire ID',
+          translate
+        ))
+      }
+      
+      if (camundaProperty.value === 'Assess Questionnaire') { // to modify condition
+        var camundaPropertyOption = findCamundaProperty(camundaProperties, { 'name': 'clinicalPathwayTaskOption' });
+        if (camundaPropertyOption.value === 'Check Question Answer Score') {
+          group.entries.push(createSelectBox(
+            'questionAnswerScore',
+            'Question Answer to Assess',
+            selectQuestionValues,
+            translate
+          ))
+        }
+      }
+
+      if (camundaProperty.value === 'Take Action') { // to modify condition
+        var camundaPropertyOption = findCamundaProperty(camundaProperties, { 'name': 'clinicalPathwayTaskOption' });
+        if (camundaPropertyOption.value === 'Apply Tag') {
+          group.entries.push(createSelectBox(
+            'tagApply',
+            'Tag to Apply',
+            selectUserStateValues,
+            translate
+          ))
+        }
+      }
+    }
   }
 }

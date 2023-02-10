@@ -107,11 +107,11 @@ PropertiesActivator.prototype.isEntryVisible = function (element, entry, group, 
     case 'extensionElements':
       switch (group.id) {
         case 'extensionElements-properties':
-          if ((is(element, 'bpmn:Task' )) && (getBusinessObject(element).name == 'Set User State')) {
+          if ((is(element, 'bpmn:ServiceTask' )) && (getBusinessObject(element).id.startsWith('Activity_Clinical_Pathway_'))) {
             return false;
             break;
           }
-          if ((is(element, 'bpmn:Task' )) && (getBusinessObject(element).name == 'Check Measurement')) {
+          if (is(element, 'bpmn:SequenceFlow' )) {
             return false;
             break;
           }
@@ -145,16 +145,11 @@ PropertiesActivator.prototype.isPropertyEditable = function (propertyName, eleme
     if (propertyName === 'name')
       return false;
   }  // inactivates only the name field of the  propertyEntry in Extensions tab,
-  
-  if (element.businessObject.name === 'Get Weight' || element.businessObject.name === 'Set User State' ) {
+
+  if (element.businessObject.id.startsWith('Activity_Clinical_Pathway_'))  {
     if (propertyName === 'id') 
       return false;
-  } // inactivates the id of the Get Weight task so it cannot be edited
+  } // inactivates the id of the Clinical Pathway task so it cannot be edited
 
-  if (element.businessObject.name === 'Check Measurement') {
-    if (entry.id === 'measurementOutput') {
-      return false; // inactivates the value of the measurement Output variable
-    }
-  }
   return true;
 };

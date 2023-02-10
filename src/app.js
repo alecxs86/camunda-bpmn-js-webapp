@@ -21,12 +21,14 @@ var deployer = null;
 
 var bpmnModeler = new BpmnModeler({
   container: '#canvas',
+  textRenderer: { // do not know yet how to make it inside the custom renderer
+    defaultStyle: {
+      fontFamily: 'verdana'
+    }
+  },
   propertiesPanel: {
     parent: '#properties'
   },
-  // moddleExtensions: {
-  //   qa: qaExtension
-  // },
   additionalModules: [
     customControlsModule
   ]

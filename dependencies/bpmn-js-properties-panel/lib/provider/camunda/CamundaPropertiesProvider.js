@@ -60,9 +60,11 @@ var connectorDetails = require('./parts/ConnectorDetailProps'),
 var properties = require('./parts/PropertiesProps');
 
 //userState and check Measurement
-var userState = require('../../../../../custom/UserStateSettings.js'),
-    checkMeasurement = require('../../../../../custom/CheckMeasurementSettings.js'),
-    checkMeasurementOutput = require('../../../../../custom/CheckMeasurementOutputSettings.js');
+var clinicalPathwayType = require('../../../../../custom/ClinicalPathwayTypeSettings.js'),
+    sequenceFlow = require('../../../../../custom/SequenceFlowSettings.js');
+
+// color Tab
+var ColorPicker = require('../../../../../custom/ColorPicker.js');
 
 // job configuration
 var jobConfiguration = require('./parts/JobConfigurationProps');
@@ -139,6 +141,8 @@ var getListenerLabel = function(param, translate) {
 
 var PROCESS_KEY_HINT = 'This maps to the process definition key.';
 var TASK_KEY_HINT = 'This maps to the task definition key.';
+
+
 
 function getIdOptions(element) {
 
@@ -506,6 +510,16 @@ function createFieldInjectionsTabGroups(element, bpmnFactory, elementRegistry, t
   ];
 }
 
+function createColorTabGroups(element, bpmnFactory, canvas, elementRegistry, modeling, translate) {
+  var colorGroup = {
+    id: 'colorGroup',
+    label: 'Colors',
+    entries: []
+  };
+  ColorPicker(colorGroup, element, modeling, translate);
+  return [colorGroup];
+}
+
 function createExtensionElementsGroups(element, bpmnFactory, elementRegistry, translate) {
 
   var propertiesGroup = {
@@ -513,44 +527,35 @@ function createExtensionElementsGroups(element, bpmnFactory, elementRegistry, tr
     label: translate('Properties'),
     entries: []
   };
+
   properties(propertiesGroup, element, bpmnFactory, translate);
 
-  //Create a group called "User State Settings"
-  var userStateGroup = {
-    id: 'extensionElements-userStateSettings',
-    label: translate('User State Settings'),
+  var clinicalPathwayTypeGroup = {
+    id: 'extensionElements-clinicalPathwayTypeSettings',
+    label: translate('Clinical Pathway Type Settings'),
     entries: []
   }
 
-  //Add the custom props to the userStateGroup
-  userState(userStateGroup, element, bpmnFactory, translate);
+  //Add the custom props to theclinicalPathwayTypeGroup
+  clinicalPathwayType(clinicalPathwayTypeGroup, element, bpmnFactory, translate);
 
-  //Create a group called Check Measurement Settings"
-  var checkMeasurementGroup = {
-    id: 'extensionElements-checkMeasurementSettings',
-    label: translate('Check Measurement Settings'),
+  var sequenceFlowGroup = {
+    id: 'extensionElements-sequenceFlowSettings',
+    label: translate('Sequence Flow Settings'),
     entries: []
   }
 
-  //Create a group called Check Measurement Output Settings"
-  var checkMeasurementOutputGroup = {
-    id: 'extensionElements-checkMeasurementOutputSettings',
-    label: translate('Check Measurement Output Settings'),
-    entries: []
-  }
+  //Add the custom props to the sequenceFlowGroup
+  sequenceFlow(sequenceFlowGroup, element, bpmnFactory, translate);
 
-  //Add the custom props to the checkMeasurementGroup
-  checkMeasurement(checkMeasurementGroup, element, bpmnFactory, translate);
-
-    //Add the custom props to the checkMeasurementOutputGroup
-    checkMeasurementOutput(checkMeasurementOutputGroup, element, bpmnFactory, translate);
-
-  return [
+  var entries = [
     propertiesGroup,
-    userStateGroup,
-    checkMeasurementGroup,
-    checkMeasurementOutputGroup
+    clinicalPathwayTypeGroup,
+    sequenceFlowGroup
   ];
+  
+  return entries;
+
 }
 
 // Camunda Properties Provider /////////////////////////////////////
@@ -660,6 +665,15 @@ function CamundaPropertiesProvider(
       groups: createFieldInjectionsTabGroups(element, bpmnFactory, elementRegistry, translate)
     };
 
+    if (element.businessObject.di) {
+      var colorTab = {
+        id: 'color',
+        label: 'Colors',
+        groups: createColorTabGroups(element, bpmnFactory, canvas, elementRegistry, modeling, translate)
+      };
+      // tabs.push(colorTab);
+    }
+
     var extensionsTab = {
       id: 'extensionElements',
       label: translate('Extensions'),
@@ -676,6 +690,7 @@ function CamundaPropertiesProvider(
       listenersTab,
       inputOutputTab,
       fieldInjectionsTab,
+      colorTab,
       extensionsTab
     ];
 

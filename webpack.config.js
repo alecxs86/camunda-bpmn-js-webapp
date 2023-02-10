@@ -40,13 +40,20 @@ module.exports = {
           },
           'sass-loader',
         ]
-      }
+      },
+      {
+        test: /\.(png|jpg|gif|svg)$/,
+        use: {
+          loader: 'url-loader'
+        }
+      },
     ]
   },
   plugins: [
     new CopyPlugin({
       patterns: [
         { from: 'src/index.html', to: '.' },
+        { from: 'src/assets', to: 'assets' },
       ]
     })
   ],
