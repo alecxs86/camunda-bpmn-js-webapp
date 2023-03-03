@@ -22,7 +22,7 @@ import TextUtil from "diagram-js/lib/util/Text";
 
 const HIGH_PRIORITY = 1500,
       TASK_BORDER_RADIUS = 2,
-      TASK_BORDER_COLOR = '#52B415';
+      TASK_BORDER_COLOR = '#835194';
 
 
 export default class CustomRenderer extends BaseRenderer {
