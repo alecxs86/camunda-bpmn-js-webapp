@@ -1,5 +1,5 @@
 
-var ColorPickerFactory = require('./ColorPickerFactory.js');
+var ColorPickerFactory = require('./colorPicker/ColorPickerFactory.js');
 var BpmnRenderUtil = require('bpmn-js/lib/draw/BpmnRenderUtil.js');
 
 

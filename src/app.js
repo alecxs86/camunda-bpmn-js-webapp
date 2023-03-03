@@ -3,6 +3,7 @@ import $ from 'jquery';
 import BpmnModeler from 'camunda-bpmn-js/lib/camunda-platform/Modeler';
 
 import customControlsModule from '../custom';
+import myPropertiesProviderModule from '../custom/provider';
 
 //import ResourceDeployer from 'camunda-resource-deployer-js/lib/ResourceDeployer'
 // var ResourceDeployer = require('camunda-resource-deployer-js');
@@ -30,7 +31,8 @@ var bpmnModeler = new BpmnModeler({
     parent: '#properties'
   },
   additionalModules: [
-    customControlsModule
+    customControlsModule,
+    myPropertiesProviderModule
   ]
 });
 

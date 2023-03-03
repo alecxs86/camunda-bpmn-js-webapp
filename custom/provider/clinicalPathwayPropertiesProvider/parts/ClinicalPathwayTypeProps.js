@@ -10,13 +10,13 @@ var is = require('bpmn-js/lib/util/ModelUtil').is;
 var getBusinessObject = require('bpmn-js/lib/util/ModelUtil').getBusinessObject;
 var find = require('lodash/collection').find;
 
-var selectValues = require('./clinicalPathwayTypeSelect.json'),
-    selectQuestionnaireValues = require('./questionnaireSelect.json'),
-    selectQuestionnaireAssessmentValues = require('./questionnaireAssessmentSelect.json'),
-    selectActionValues = require('./actionSelect.json'),
-    selectAssessQuestionnaireIdValues = require('./asessQuestionnaireIdSelect.json'),
-    selectQuestionValues = require('./questionsSelect.json'),
-    selectUserStateValues = require('./userStateSelect.json');
+var selectValues = require('../../../model/clinicalPathwayTypeSelect.json'),
+    selectQuestionnaireValues = require('../../../model/questionnaireSelect.json'),
+    selectQuestionnaireAssessmentValues = require('../../../model/questionnaireAssessmentSelect.json'),
+    selectActionValues = require('../../../model/actionSelect.json'),
+    selectAssessQuestionnaireIdValues = require('../../../model/asessQuestionnaireIdSelect.json'),
+    selectQuestionValues = require('../../../model/questionsSelect.json'),
+    selectUserStateValues = require('../../../model/userStateSelect.json');
 
 
 function findCamundaProperty(camundaProperties, binding) {
@@ -119,7 +119,6 @@ module.exports = function (group, element, bpmnFactory, translate) {
       id: id,
       description: description,
       label: label,
-      // label: 'Questionnaire ID',
       modelProperty: id,
       get: function (element, node) {
         return getElementValue(element, node, id);
@@ -160,7 +159,6 @@ module.exports = function (group, element, bpmnFactory, translate) {
 
     var camundaProperties = findExtension(getBusinessObject(element).extensionElements, 'camunda:Properties');
   
-    console.log(camundaProperties);
     if (camundaProperties != null) {
       var camundaProperty = findCamundaProperty(camundaProperties, { 'name': 'clinicalPathwayTaskType' });
       switch (camundaProperty.value) {

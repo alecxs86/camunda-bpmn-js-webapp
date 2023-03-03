@@ -11,12 +11,12 @@ var isAny = require('bpmn-js/lib/features/modeling/util/ModelingUtil').isAny;
 var getBusinessObject = require('bpmn-js/lib/util/ModelUtil').getBusinessObject;
 var find = require('lodash/collection').find;
 
-var selectValues = require('./thresholdTypeSelect.json'),/**
+var selectValues = require('../../../model/thresholdTypeSelect.json'),/**
     selectQuestionnaireValues = require('./questionnaireSelect.json'),
     selectQuestionnaireAssessmentValues = require('./questionnaireAssessmentSelect.json'),
     selectActionValues = require('./actionSelect.json'),
     selectAssessQuestionnaireIdValues = require('./asessQuestionnaireIdSelect.json'),*/
-    selectQuestionValues = require('./questionsSelect.json')/**,
+    selectQuestionValues = require('../../../model/questionsSelect.json')/**,
     selectUserStateValues = require('./userStateSelect.json') ,
     selectCondition = require('./thresholdTypeSelect.json') */;
 
@@ -145,13 +145,14 @@ module.exports = function (group, element, bpmnFactory, translate) {
       }
     });
   };
-
-  console.log(is(element, 'bpmn:SequenceFlow'));
+/**
   if (is(element, 'bpmn:SequenceFlow')) {
     console.log(element);
     console.log(element.source);
     console.log(isConditionalSource(element.source));
   }
+   */
+  
   // create a selectBox only if the is "Sequence Flow" -- can be modified to suit any purpose
   if (is(element, 'bpmn:SequenceFlow') && isConditionalSource(element.source)) {
     group.entries.push(createSelectBox(

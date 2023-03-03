@@ -36,7 +36,7 @@
   "license": "MIT",
   "dependencies": {
     "autoprefixer": "^10.4.2",
-    "bpmn-js-properties-panel": "file:dependencies/bpmn-js-properties-panel",
+    "bpmn-js-properties-panel": "^1.1.0",
     "camunda-bpmn-js": "^0.12.2",
     "camunda-resource-deployer-js": "^0.1.0",
     "css-loader": "^6.7.0",
