@@ -9,7 +9,7 @@
     "bundle": "run-s bundle:*",
     "bundle:js": "webpack -c webpack.config.js",
     "bundle:less": "lessc src/app.less public/app.css",
-    "serve": "sirv public --dev"
+    "serve": "sirv public --dev --host 0.0.0.0"
   },
   "repository": {
     "type": "git",
