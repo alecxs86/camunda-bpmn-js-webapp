@@ -4,7 +4,6 @@ FROM node:14.21.2-bullseye
 WORKDIR /app
 
 COPY ["package.json", "package-lock.json*", "webpack.config.js", "./"]
-ADD dependencies /app/dependencies
 
 RUN npm install
 
