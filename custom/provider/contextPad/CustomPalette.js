@@ -1,8 +1,5 @@
 'use strict';
 
-const WEIGHT_THRESHOLD = 55;
-const NO_DAYS_THRESHOLD = 3;
-
 export default class CustomPalette {
   constructor(bpmnFactory, create, elementFactory, palette, modeling, translate) {
     this.bpmnFactory = bpmnFactory;
@@ -42,8 +39,10 @@ export default class CustomPalette {
 
       shape.businessObject.id = 'Activity_Clinical_Pathway_' + generateRandomString(7);
 
-      shape.businessObject['type'] = 'external';
-      shape.businessObject['topic'] = 'questionnaireSend'; //this will be updated dynamically when selecting other type of box behaviour
+      shape.businessObject['class'] = 'com.healthentia.camunda.programme1.SendQuestionnaire';
+      
+      // shape.businessObject['type'] = 'class';
+      // shape.businessObject['topic'] = 'com.healthentia.camunda.programme1.SendQuestionnaire'; //this will be updated dynamically when selecting other type of box behaviour
 
       var selectedProperty1 = bpmnFactory.create('camunda:Property', {
         name: 'clinicalPathwayTaskType',

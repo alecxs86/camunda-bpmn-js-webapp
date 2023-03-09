@@ -153,6 +153,8 @@ module.exports = function (group, element, bpmnFactory, translate) {
       translate
     ));
 
+    console.log(getBusinessObject(element));
+
     var displayText = 'Questionnaire Type';
     var selectDynamicValues = [selectQuestionnaireValues, selectQuestionnaireAssessmentValues, selectActionValues];
     var action = selectDynamicValues[0];
@@ -207,7 +209,8 @@ module.exports = function (group, element, bpmnFactory, translate) {
           'Fill in the unique ID of the questionnaire',
           'Questionnaire ID',
           translate
-        ))
+        ));
+        getBusinessObject(element)['class'] = 'com.healthentia.camunda.programme1.SendQuestionnaire';
       }
       
       if (camundaProperty.value === 'Assess Questionnaire') { // to modify condition
@@ -218,8 +221,9 @@ module.exports = function (group, element, bpmnFactory, translate) {
             'Question Answer to Assess',
             selectQuestionValues,
             translate
-          ))
-        }
+          ))          
+        };
+        getBusinessObject(element)['class'] = 'com.healthentia.camunda.programme1.ProcessQuestionnaire';
       }
 
       if (camundaProperty.value === 'Take Action') { // to modify condition
@@ -230,8 +234,10 @@ module.exports = function (group, element, bpmnFactory, translate) {
             'Tag to Apply',
             selectUserStateValues,
             translate
-          ))
-        }
+          ));
+          
+        };
+        getBusinessObject(element)['class'] = 'com.healthentia.camunda.programme1.TakeAction';
       }
     }
   }
