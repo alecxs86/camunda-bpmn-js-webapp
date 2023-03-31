@@ -1,125 +1,75 @@
 [
   {
-    "subjectId": "57da971d-bedc-49f9-9ae7-ad2b276dc01c",
-    "name": "DAILYSYMPTOMQUEST",
-    "questions": {
-      "name": "DAILYSYMPTOMQUEST",
-      "value": "YES"
-    }
-  },
-  {
-    "subjectId": "57da971d-bedc-49f9-9ae7-ad2b276dc01c",
-    "name": "EQ5D",
+    "patientQuestionnaireId": 1350,
+    "questionnaireId": 1, 
+    "codeName": "DAILYSYMPTOMQUEST",
+    "scores": [
+      {
+        "codeName": "Score1",
+        "value": 50
+      }
+    ],
     "questions": [
       {
-        "name": "CCQ1",
-        "value": "CCQ1"
-      },
-      {
-        "name": "CCQ2",
-        "value": "CCQ2"
-      },
-      {
-        "name": "CCQ3",
-        "value": "CCQ3"
-      },
-      {
-        "name": "CCQ4",
-        "value": "CCQ4"
-      },
-      {
-        "name": "CCQ5",
-        "value": "CCQ5"
-      },
-      {
-        "name": "CCQ6",
-        "value": "CCQ6"
-      },
-      {
-        "name": "CCQ7",
-        "value": "CCQ7"
-      },
-      {
-        "name": "CCQ8",
-        "value": "CCQ8"
-      },
-      {
-        "name": "CCQ9",
-        "value": "CCQ9"
-      },
-      {
-        "name": "CCQ10",
-        "value": "CCQ10"
+        "type": "Simple",
+        "codeName": "DAILYSYMPTOMQUEST",
+        "answer": "yes",
+        "selectedOptions": []
       }
     ]
+
   },
   {
-    "subjectId": "57da971d-bedc-49f9-9ae7-ad2b276dc01c",
-    "name": "HADS",
+    "patientQuestionnaireId": 1360,
+    "questionnaireId": 2, 
+    "codeName": "KCCQ-23",
+    "scores": [
+      {
+        "codeName": "Score1",
+        "value": 50
+      },
+      {
+        "codeName": "Score2",
+        "value": 80
+      }
+    ],
     "questions": [
       {
-        "name": "HADS_INTRO",
-        "value": "HADS_INTRO"
+        "type": "Simple",
+        "codeName": "Question1",
+        "answer": "yes",
+        "selectedOptions": []
       },
       {
-        "name": "HADS_1",
-        "value": "HADS_1"
+        "type": "MultipleChoice",
+        "codeName": "Question2",
+        "selectedOptions": [
+          {
+            "selectedOptionId": 5,
+            "mapId": "FEVER",
+            "score": 0
+          },
+          {
+            "selectedOptionId": 6,
+            "score": 0
+          },
+          {
+            "selectedOptionId": 7,
+            "mapId": "FATIGUE",
+            "score": 1
+          }
+        ]
       },
       {
-        "name": "HADS_2",
-        "value": "HADS_2"
-      },
-      {
-        "name": "HADS_3",
-        "value": "HADS_3"
-      },
-      {
-        "name": "HADS_4",
-        "value": "HADS_4"
-      },
-      {
-        "name": "HADS_5",
-        "value": "HADS_5"
-      },
-      {
-        "name": "HADS_6",
-        "value": "HADS_6"
-      },
-      {
-        "name": "HADS_7",
-        "value": "HADS_7"
-      },
-      {
-        "name": "HADS_8",
-        "value": "HADS_8"
-      },
-      {
-        "name": "HADS_9",
-        "value": "HADS_9"
-      },
-      {
-        "name": "HADS_10",
-        "value": "HADS_10"
-      },
-      {
-        "name": "HADS_11",
-        "value": "HADS_11"
-      },
-      {
-        "name": "HADS_12",
-        "value": "HADS_12"
-      },
-      {
-        "name": "HADS_13",
-        "value": "HADS_13"
-      },
-      {
-        "name": "HADS_14",
-        "value": "HADS_14"
-      },
-      {
-        "name": "HADS_END",
-        "value": "HADS_END"
+        "type": "SingleChoice",
+        "codeName": "Question3",
+        "selectedOptions": [
+          {
+            "selectedOptionId": 5,
+            "mapId": "13",
+            "score": 1
+          }
+        ]
       }
     ]
   }

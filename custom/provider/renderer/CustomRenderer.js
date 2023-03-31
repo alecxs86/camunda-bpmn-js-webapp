@@ -17,6 +17,7 @@ import {
 
 import { is } from 'bpmn-js/lib/util/ModelUtil';
 import { isAny } from 'bpmn-js/lib/features/modeling/util/ModelingUtil';
+import { modeling } from 'bpmn-js/lib/features/modeling/Modeling';
 
 import TextUtil from "diagram-js/lib/util/Text";
 
@@ -45,6 +46,20 @@ export default class CustomRenderer extends BaseRenderer {
       const rect = drawRect(parentNode, 100, 80, TASK_BORDER_RADIUS, TASK_BORDER_COLOR);
 
       prependTo(rect, parentNode);
+
+      svgRemove(shape);
+
+      return shape;
+    }
+
+    if ((is(element, 'bpmn:Task')) && (getBusinessObject(element).id.startsWith('Activity_Clinical_Pathway_'))) {
+      const errorBoundaryEvent = elementFactory.createShape({
+        type: 'bpmn:BoundaryEvent',
+        eventDefinitionType: 'bpmn:MessageEventDefinition'
+      });
+    
+
+      modeling.createShape(errorBoundaryEvent, { x: 400, y: 140 }, shape, { attach: true });
 
       svgRemove(shape);
 

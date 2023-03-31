@@ -153,7 +153,7 @@ module.exports = function (group, element, bpmnFactory, translate) {
   }
    */
   
-  // create a selectBox only if the is "Sequence Flow" -- can be modified to suit any purpose
+  // create a selectBox only if the element is "Sequence Flow" -- can be modified to suit any purpose
   if (is(element, 'bpmn:SequenceFlow') && isConditionalSource(element.source)) {
     group.entries.push(createSelectBox(
       'questionAnswer',

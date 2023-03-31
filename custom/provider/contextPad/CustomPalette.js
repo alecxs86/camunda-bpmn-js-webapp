@@ -35,6 +35,7 @@ export default class CustomPalette {
     function createClinicalPathwayTask(event) {
 
       const shape = elementFactory.createShape({ type: 'bpmn:ServiceTask' });
+
       shape.businessObject.name = 'Pathway Action';
 
       shape.businessObject.id = 'Activity_Clinical_Pathway_' + generateRandomString(7);
@@ -66,8 +67,17 @@ export default class CustomPalette {
       shape.businessObject.extensionElements = shape.businessObject.extensionElements || bpmnFactory.create('bpmn:ExtensionElements', {
         values: [properties]
       });
-
+/*
+      const errorBoundaryEvent = elementFactory.createShape({
+        type: 'bpmn:BoundaryEvent',
+        eventDefinitionType: 'bpmn:MessageEventDefinition'
+      });    
+**/
       create.start(event, shape);
+      
+
+      // modeling.createShape(errorBoundaryEvent, { x: 400, y: 140 }, shape, { attach: true });
+      
     }
 
     return { 

@@ -153,8 +153,6 @@ module.exports = function (group, element, bpmnFactory, translate) {
       translate
     ));
 
-    console.log(getBusinessObject(element));
-
     var displayText = 'Questionnaire Type';
     var selectDynamicValues = [selectQuestionnaireValues, selectQuestionnaireAssessmentValues, selectActionValues];
     var action = selectDynamicValues[0];
@@ -203,17 +201,40 @@ module.exports = function (group, element, bpmnFactory, translate) {
 
     if (camundaProperties != null) {
       var camundaProperty = findCamundaProperty(camundaProperties, { 'name': 'clinicalPathwayTaskType' });
-      if (camundaProperty.value === 'Send Questionnaire') {
-        group.entries.push(createTextField(
-          'clinicalPathwayTaskID',
-          'Fill in the unique ID of the questionnaire',
-          'Questionnaire ID',
-          translate
-        ));
-        getBusinessObject(element)['class'] = 'com.healthentia.camunda.programme1.SendQuestionnaire';
-      }
+
+      switch (camundaProperty.value) {
+      // if (camundaProperty.value === 'Send Questionnaire') {
+        case 'Send Questionnaire':
+          group.entries.push(createTextField(
+            'clinicalPathwayTaskID',
+            'Fill in the unique ID of the questionnaire',
+            'Questionnaire ID',
+            translate
+          ));
+
+        // here we will implement an if statement. When the condition that it is a first questionnaire is met, then the implementation is class
+        // if it is not a first questionnaire, then the implementation is external
       
-      if (camundaProperty.value === 'Assess Questionnaire') { // to modify condition
+        // first we console.log to see model
+      // console.log("incoming (before):", element.incoming);
+      // console.log("outgoing (after):", element.outgoing);
+
+      // console.log("is previous activity of element %s bpmn:StartEvent:", element.id, is(getBusinessObject(element.incoming[0]).sourceRef, 'bpmn:StartEvent'));
+    
+        if (is(getBusinessObject(element.incoming[0]).sourceRef, 'bpmn:StartEvent')) { //ToDo: check if incoming might be an array with multiple values; check if we can alter the
+          //condition and obtain a list of previous activities and check if there is any other element with camundaProperty.value  'Send Questionnaire'
+          getBusinessObject(element)['class'] = 'com.healthentia.camunda.programme1.SendQuestionnaire';
+          getBusinessObject(element)['type'] = null;
+          getBusinessObject(element)['topic'] = null; 
+        } else {
+          getBusinessObject(element)['class'] = null;
+          getBusinessObject(element)['type'] = 'external';
+          getBusinessObject(element)['topic'] = 'sendQuestionnaire'; //this will be updated dynamically when selecting other type of box behaviour
+        }
+        break;
+
+      // } else if (camundaProperty.value === 'Assess Questionnaire') { // to modify condition
+      case 'Assess Questionnaire':
         var camundaPropertyOption = findCamundaProperty(camundaProperties, { 'name': 'clinicalPathwayTaskOption' });
         if (camundaPropertyOption.value === 'Check Question Answer Score') {
           group.entries.push(createSelectBox(
@@ -223,10 +244,13 @@ module.exports = function (group, element, bpmnFactory, translate) {
             translate
           ))          
         };
+        getBusinessObject(element)['type'] = null;
+        getBusinessObject(element)['topic'] = null; 
         getBusinessObject(element)['class'] = 'com.healthentia.camunda.programme1.ProcessQuestionnaire';
-      }
+        break;
 
-      if (camundaProperty.value === 'Take Action') { // to modify condition
+      // } else if (camundaProperty.value === 'Take Action') { // to modify condition
+      case 'Take Action':
         var camundaPropertyOption = findCamundaProperty(camundaProperties, { 'name': 'clinicalPathwayTaskOption' });
         if (camundaPropertyOption.value === 'Apply Tag') {
           group.entries.push(createSelectBox(
@@ -235,9 +259,11 @@ module.exports = function (group, element, bpmnFactory, translate) {
             selectUserStateValues,
             translate
           ));
-          
         };
+        getBusinessObject(element)['type'] = null;
+        getBusinessObject(element)['topic'] = null; 
         getBusinessObject(element)['class'] = 'com.healthentia.camunda.programme1.TakeAction';
+        break;
       }
     }
   }

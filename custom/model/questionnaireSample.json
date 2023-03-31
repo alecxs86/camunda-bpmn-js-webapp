@@ -1,0 +1,54 @@
+{
+	"PatientQuestionnaireId": 1350,
+    "QuestionaireId": 1,
+	"CodeName": "KCCQ-23",
+	"Scores": [
+		{
+			"CodeName": "Score1",
+			"Value": 50
+		},
+		{
+			"CodeName": "Score2",
+			"Value": 80
+		}
+	],
+	"Questions": [
+		{
+			"Type": "Simple",
+			"CodeName": "Question1",
+			"Answer": "yes",
+			"SelectedOptions": []
+		},
+		{
+			"Type": "MultipleChoice",
+			"CodeName": "Question2",
+			"SelectedOptions": [
+				{
+					"SelectedOptionId": 5,
+					"MapId": "FEVER",
+					"Score": 0
+				},
+				{
+					"SelectedOptionId": 6,
+					"Score": 0
+				},
+				{
+					"SelectedOptionId": 7,
+					"MapId": "FATIGUE",
+					"Score": 1
+				}
+			]
+		},
+		{
+			"Type": "SingleChoice",
+			"CodeName": "Question3",
+			"SelectedOptions": [
+				{
+					"SelectedOptionId": 5,
+					"MapId": "13",
+					"Score": 1
+				}
+			]
+		}
+	]
+}
