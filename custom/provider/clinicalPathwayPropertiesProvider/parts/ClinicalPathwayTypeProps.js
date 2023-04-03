@@ -221,7 +221,7 @@ module.exports = function (group, element, bpmnFactory, translate) {
 
       // console.log("is previous activity of element %s bpmn:StartEvent:", element.id, is(getBusinessObject(element.incoming[0]).sourceRef, 'bpmn:StartEvent'));
     
-        if (is(getBusinessObject(element.incoming[0]).sourceRef, 'bpmn:StartEvent')) { //ToDo: check if incoming might be an array with multiple values; check if we can alter the
+        if ((element.incoming[0]!=null) && is(getBusinessObject(element.incoming[0]).sourceRef, 'bpmn:StartEvent')) { //ToDo: check if incoming might be an array with multiple values; check if we can alter the
           //condition and obtain a list of previous activities and check if there is any other element with camundaProperty.value  'Send Questionnaire'
           getBusinessObject(element)['class'] = 'com.healthentia.camunda.programme1.SendQuestionnaire';
           getBusinessObject(element)['type'] = null;

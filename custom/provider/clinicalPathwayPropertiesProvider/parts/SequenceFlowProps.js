@@ -154,27 +154,49 @@ module.exports = function (group, element, bpmnFactory, translate) {
    */
   
   // create a selectBox only if the element is "Sequence Flow" -- can be modified to suit any purpose
-  if (is(element, 'bpmn:SequenceFlow') && isConditionalSource(element.source)) {
-    group.entries.push(createSelectBox(
-      'questionAnswer',
-      'Question Answer',
-      selectQuestionValues,
-      translate
-    ));
+  if (is(element, 'bpmn:SequenceFlow') && isConditionalSource(element.source) && isAssessQuestionnaireTask(element)) { //we need to modify this to select according to previous assess questionnaire settings
+    switch (getQuestionnaireScoreType(element)) {
+      case 'Check Questionnaire Score':
+        group.entries.push(createSelectBox(
+          'thresholdType',
+          'Threshold Type',
+          selectValues,
+          translate
+        ));
     
-    group.entries.push(createSelectBox(
-      'thresholdType',
-      'Threshold Type',
-      selectValues,
-      translate
-    ));
+        group.entries.push(createTextField(
+          'thresholdValue',
+          'Fill in the value',
+          'Value',
+          translate
+        ));
+        
+        break;
+      case 'Check Question Answer Score':
+        group.entries.push(createSelectBox(
+          'questionAnswer',
+          'Question Answer',
+          selectQuestionValues,
+          translate
+        ));
+        
+        group.entries.push(createSelectBox(
+          'thresholdType',
+          'Threshold Type',
+          selectValues,
+          translate
+        ));
+    
+        group.entries.push(createTextField(
+          'thresholdValue',
+          'Fill in the value',
+          'Value',
+          translate
+        ));
 
-    group.entries.push(createTextField(
-      'thresholdValue',
-      'Fill in the value',
-      'Value',
-      translate
-    ))
+        break;
+    };
+    
 
     };
 
@@ -192,4 +214,19 @@ var CONDITIONAL_SOURCES = [
   
 function isConditionalSource(element) {
     return isAny(element, CONDITIONAL_SOURCES);
+}
+
+function isAssessQuestionnaireTask(element) {
+  return ((getBusinessObject(element.source.incoming[0]).sourceRef.class === 'com.healthentia.camunda.programme1.ProcessQuestionnaire') ? true : false)
+}
+
+function getQuestionnaireScoreType(element) {
+  var camundaProperties = findExtension(getBusinessObject(element.source.incoming[0]).sourceRef.extensionElements, 'camunda:Properties');
+  if (camundaProperties != null) {
+    var camundaProperty = findCamundaProperty(camundaProperties, { 'name': 'clinicalPathwayTaskOption' });
+    return camundaProperty.value;
+  } else {
+    return '';
+  }
+       
 }
