@@ -229,7 +229,7 @@ module.exports = function (group, element, bpmnFactory, translate) {
         } else {
           getBusinessObject(element)['class'] = null;
           getBusinessObject(element)['type'] = 'external';
-          getBusinessObject(element)['topic'] = 'sendQuestionnaire'; //this will be updated dynamically when selecting other type of box behaviour
+          getBusinessObject(element)['topic'] = 'SendQuestionnaire_${execution.getProcessInstanceId()}'; //this will be updated dynamically at runtime?
         }
         break;
 

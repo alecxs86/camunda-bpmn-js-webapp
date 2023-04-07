@@ -19,7 +19,7 @@ import eventProps from 'bpmn-js-properties-panel/lib/provider/bpmn/parts/EventPr
 import properties from 'bpmn-js-properties-panel/lib/provider/camunda/parts/PropertiesProps';
 import serviceTaskDelegateProps from 'bpmn-js-properties-panel/lib/provider/camunda/parts/ServiceTaskDelegateProps.js';
 import scriptProps from 'bpmn-js-properties-panel/lib/provider/camunda/parts/ScriptTaskProps';
-import conditionalProps from 'bpmn-js-properties-panel/lib/provider/camunda/parts/ConditionalProps.js';
+import conditionalProps from './parts/ConditionalProps';
 import startEventInitiator from 'bpmn-js-properties-panel/lib/provider/camunda/parts/StartEventInitiator.js';
 
 // Require custom property entries.

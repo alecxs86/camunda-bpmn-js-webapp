@@ -116,7 +116,7 @@ module.exports = function (group, element, bpmnFactory, translate) {
   };
 
   // not used for the moment, but may be useful in the future
-  var createTextField = function (id, description, label, ranslate) {
+  var createTextField = function (id, description, label, translate) {
     return entryFactory.textField(translate, {
       id: id,
       description: description,
@@ -194,6 +194,35 @@ module.exports = function (group, element, bpmnFactory, translate) {
           translate
         ));
 
+        var questionAnswer = getExtensionElementValue(element, 'questionAnswer');
+        
+        var operator = '';
+        switch(getExtensionElementValue(element, 'thresholdType')) {
+          case 'Higher than':
+            operator = '>';
+            break;
+          case 'Equal to':
+            operator = '=';
+            break;
+          case 'Lower than':
+            operator = '<';
+            break;
+          default:
+            break;          
+        }
+
+        var value = getExtensionElementValue(element, 'thresholdValue');
+
+        console.log("script for sequenceFlow comparison is", '${'+questionAnswer+operator+value+'}');
+        console.log(element);
+
+        var values = {
+          conditionType: 'expression',
+          condition: '${'+questionAnswer+operator+value+'}'
+        };
+
+        // conditionalProps.set(element, values, null); // only works for expression type
+
         break;
     };
     
@@ -230,3 +259,22 @@ function getQuestionnaireScoreType(element) {
   }
        
 }
+
+function getExtensionElementValue(element, propertyName) {
+  var bo = getBusinessObject(element);
+  var elements = bo.get('extensionElements');
+  if (elements != null) {
+    var camundaProperties = findExtension(elements, 'camunda:Properties');
+    camundaProperties = camundaProperties.values.filter(function (element) {
+      if (element.name === propertyName) {
+        return element;
+      }
+    });
+  }
+  if (camundaProperties != null && camundaProperties.length > 0) {
+    return camundaProperties[0].value;
+  } else {
+    return '';
+  }
+}
+
