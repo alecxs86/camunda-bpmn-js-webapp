@@ -4,6 +4,11 @@ import BpmnModeler from 'camunda-bpmn-js/lib/camunda-platform/Modeler';
 
 import customControlsModule from '../custom';
 import myPropertiesProviderModule from '../custom/provider';
+import customTranslate from '../custom/translate/customTranslate';
+
+var customTranslateModule = {
+  translate: [ 'value', customTranslate ]
+};
 
 //import ResourceDeployer from 'camunda-resource-deployer-js/lib/ResourceDeployer'
 // var ResourceDeployer = require('camunda-resource-deployer-js');
@@ -32,6 +37,7 @@ var bpmnModeler = new BpmnModeler({
   },
   additionalModules: [
     customControlsModule,
+    customTranslateModule,
     myPropertiesProviderModule
   ]
 });

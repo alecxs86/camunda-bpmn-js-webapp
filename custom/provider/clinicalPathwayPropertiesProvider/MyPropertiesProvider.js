@@ -35,7 +35,7 @@ import ColorPicker from './parts/ColorPicker.js';
 function createGeneralTabGroups(element, bpmnFactory, canvas, elementRegistry, translate) {
     var generalGroup = {
         id: 'general',
-        label: 'General',
+        label: translate('General'),
         entries: []
     };
 
@@ -58,7 +58,7 @@ function createGeneralTabGroups(element, bpmnFactory, canvas, elementRegistry, t
 
     var documentationGroup = {
         id: 'documentation',
-        label: 'Documentation',
+        label: translate('Documentation'),
         entries: []
     };
 
@@ -76,7 +76,7 @@ function createServiceTabGroups(element, translate) {
     // Create a group called "Service Properties".
     var serviceGroup = {
         id: 'service-tab',
-        label: 'Service Properties',
+        label: translate('Service Properties'),
         entries: []
     };
 
@@ -91,7 +91,7 @@ function createServiceTabGroups(element, translate) {
 function createColorTabGroups(element, bpmnFactory, canvas, elementRegistry, modeling, translate) {
     var colorGroup = {
       id: 'colorGroup',
-      label: 'Colors',
+      label: translate('Colors'),
       entries: []
     };
     ColorPicker(colorGroup, element, modeling, translate);
@@ -225,7 +225,7 @@ export default function MyPropertiesProvider (eventBus, bpmnFactory, canvas, ele
 
         var generalTab = {
             id: 'general',
-            label: 'General',
+            label: translate('General'),
             groups: createGeneralTabGroups(element, bpmnFactory, canvas, elementRegistry, translate)
         };
 
@@ -242,7 +242,7 @@ export default function MyPropertiesProvider (eventBus, bpmnFactory, canvas, ele
         if (element.businessObject.di) {
             var colorTab = {
               id: 'color',
-              label: 'Colors',
+              label: translate('Colors'),
               groups: createColorTabGroups(element, bpmnFactory, canvas, elementRegistry, modeling, translate)
             };
         }
