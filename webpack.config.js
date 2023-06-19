@@ -1,4 +1,8 @@
-var CopyPlugin = require('copy-webpack-plugin');
+var CopyPlugin = require('copy-webpack-plugin')
+const webpack = require('webpack')
+
+const dotenv = require('dotenv').config({ path: __dirname + '/.env' })
+const isDevelopment = process.env.NODE_ENV !== 'production'
 
 var path = require('path');
 
@@ -7,7 +11,7 @@ module.exports = {
   entry: './src/app.js',
   output: {
     path: path.resolve(__dirname, 'public'),
-    filename: 'app.js'
+    filename: 'app.js',
   },
   module: {
     rules: [
@@ -53,14 +57,26 @@ module.exports = {
     new CopyPlugin({
       patterns: [
         { from: 'src/index.html', to: '.' },
+        { from: 'src/accessControl.js', to: '.' },
+        { from: 'src/access-denied.html', to: '.' },
         { from: 'src/assets', to: 'assets' },
       ]
+    }),
+    new webpack.ProvidePlugin({
+      process: 'process/browser',
+    }),
+    new webpack.DefinePlugin({
+      'process.env': JSON.stringify(dotenv.parsed),
+      'process.env.NODE_ENV': JSON.stringify(isDevelopment ? 'development' : 'production'),
     })
   ],
 
   resolve: {
     fallback: {
-      "fs": false
+      "fs": false,
+      "crypto": require.resolve("crypto-browserify"),
+      "util": require.resolve("util/"),
+      "stream": require.resolve("stream-browserify")
     }
   }
 
