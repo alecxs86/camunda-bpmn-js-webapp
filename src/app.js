@@ -29,7 +29,7 @@ var bpmnModeler = null;
 // console.log(req.headers);
 
 // const token = req.headers.authorization; // Retrieve the token from the request headers
-const token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0aW1lc3RhbXAiOjE2ODk3NzI5MTEsIm5hbWUiOiJHaWNhIER1cnUiLCJpYXQiOjE2ODk3NzExMzgsImV4cCI6MTY4OTc3NDczOH0.oOf1azIF3Qjj2MthAVnYDw9B6JiFZT7Ho3U6mS2x99k';
+const token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0aW1lc3RhbXAiOjE2ODk3NzI5MTEsIm5hbWUiOiJHaWNhIER1cnUiLCJpYXQiOjE2OTA1NTIwOTUsImV4cCI6MTY5MDU1NTY5NX0.vli5txXxddTN91fzPujJDGI9nkTwqdqd0Yon0hW450U';
 
 checkAccess(token).then(accessAllowed => {
   if (accessAllowed) {
@@ -54,6 +54,51 @@ checkAccess(token).then(accessAllowed => {
   
   container.removeClass('with-diagram');
 
+  $(function() {
+
+    $('#js-create-diagram').click(function(e) {
+      e.stopPropagation();
+      e.preventDefault();
+  
+      createNewDiagram();
+    });
+  
+    $('.buttons a').click(function(e) {
+      if (!$(this).is('.active')) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    });
+  
+    var exportArtifacts = debounce(function() {
+  
+      saveSVG();
+      saveDiagram();
+  
+    }, 500);
+  
+  
+    bpmnModeler.on('commandStack.changed', exportArtifacts);
+    bpmnModeler.on('comments.updated', exportArtifacts);
+  
+    bpmnModeler.on('canvas.click', function() {
+      bpmnModeler.get('comments').collapseAll();
+    });
+  
+    function debounce(fn, timeout) {
+  
+      var timer;
+    
+      return function() {
+        if (timer) {
+          clearTimeout(timer);
+        }
+    
+        timer = setTimeout(fn, timeout);
+      };
+    };
+  
+  });
   
   } else {
     // Show error message or redirect to an access denied page
@@ -176,48 +221,4 @@ async function saveDiagram() {
   }
 }
 
-$(function() {
 
-  $('#js-create-diagram').click(function(e) {
-    e.stopPropagation();
-    e.preventDefault();
-
-    createNewDiagram();
-  });
-
-  $('.buttons a').click(function(e) {
-    if (!$(this).is('.active')) {
-      e.preventDefault();
-      e.stopPropagation();
-    }
-  });
-
-  var exportArtifacts = debounce(function() {
-
-    saveSVG();
-    saveDiagram();
-
-  }, 500);
-
-
-  bpmnModeler.on('commandStack.changed', exportArtifacts);
-  bpmnModeler.on('comments.updated', exportArtifacts);
-
-  bpmnModeler.on('canvas.click', function() {
-    bpmnModeler.get('comments').collapseAll();
-  });
-
-  function debounce(fn, timeout) {
-
-    var timer;
-  
-    return function() {
-      if (timer) {
-        clearTimeout(timer);
-      }
-  
-      timer = setTimeout(fn, timeout);
-    };
-  };
-
-});
