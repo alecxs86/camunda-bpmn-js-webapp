@@ -29,7 +29,16 @@ var bpmnModeler = null;
 // console.log(req.headers);
 
 // const token = req.headers.authorization; // Retrieve the token from the request headers
-const token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0aW1lc3RhbXAiOjE2ODk3NzI5MTEsIm5hbWUiOiJHaWNhIER1cnUiLCJpYXQiOjE2OTA1NTIwOTUsImV4cCI6MTY5MDU1NTY5NX0.vli5txXxddTN91fzPujJDGI9nkTwqdqd0Yon0hW450U';
+
+const queryString = window.location.search;
+
+const params = new URLSearchParams(queryString);
+
+const token = params.get('token');
+
+console.log(token);
+
+// const token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0aW1lc3RhbXAiOjE2ODk3NzI5MTEsIm5hbWUiOiJHaWNhIER1cnUiLCJpYXQiOjE2OTA1NTIwOTUsImV4cCI6MTY5MDU1NTY5NX0.vli5txXxddTN91fzPujJDGI9nkTwqdqd0Yon0hW450U';
 
 checkAccess(token).then(accessAllowed => {
   if (accessAllowed) {
