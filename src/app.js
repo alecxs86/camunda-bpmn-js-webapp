@@ -2,6 +2,8 @@ require('default-passive-events');
 import $ from 'jquery';
 import BpmnModeler from 'camunda-bpmn-js/lib/camunda-platform/Modeler';
 
+import checkAccess from './accessControl.js';
+
 import customControlsModule from '../custom';
 import myPropertiesProviderModule from '../custom/provider';
 import customTranslate from '../custom/translate/customTranslate';
@@ -9,9 +11,6 @@ import customTranslate from '../custom/translate/customTranslate';
 var customTranslateModule = {
   translate: [ 'value', customTranslate ]
 };
-
-//import ResourceDeployer from 'camunda-resource-deployer-js/lib/ResourceDeployer'
-// var ResourceDeployer = require('camunda-resource-deployer-js');
 
 import 'camunda-bpmn-js/dist/assets/camunda-platform-modeler.css';
 
@@ -25,28 +24,105 @@ var canvas = $('#js-canvas');
 
 var deployer = null;
 
-var bpmnModeler = new BpmnModeler({
-  container: '#canvas',
-  textRenderer: { // do not know yet how to make it inside the custom renderer
-    defaultStyle: {
-      fontFamily: 'verdana'
-    }
-  },
-  propertiesPanel: {
-    parent: '#properties'
-  },
-  additionalModules: [
-    customControlsModule,
-    customTranslateModule,
-    myPropertiesProviderModule
-  ]
+var bpmnModeler = null;
+
+// console.log(req.headers);
+
+// const token = req.headers.authorization; // Retrieve the token from the request headers
+
+const queryString = window.location.search;
+
+const params = new URLSearchParams(queryString);
+
+const token = params.get('token');
+
+console.log(token);
+
+// const token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0aW1lc3RhbXAiOjE2ODk3NzI5MTEsIm5hbWUiOiJHaWNhIER1cnUiLCJpYXQiOjE2OTA1NTIwOTUsImV4cCI6MTY5MDU1NTY5NX0.vli5txXxddTN91fzPujJDGI9nkTwqdqd0Yon0hW450U';
+
+checkAccess(token).then(accessAllowed => {
+  if (accessAllowed) {
+    // Make API request or perform other actions
+  
+  bpmnModeler = new BpmnModeler({
+    container: '#canvas',
+    textRenderer: { // do not know yet how to make it inside the custom renderer
+      defaultStyle: {
+        fontFamily: 'verdana'
+      }
+    },
+    propertiesPanel: {
+      parent: '#properties'
+    },
+    additionalModules: [
+      customControlsModule,
+      customTranslateModule,
+      myPropertiesProviderModule
+    ]
+  });
+  
+  container.removeClass('with-diagram');
+
+  $(function() {
+
+    $('#js-create-diagram').click(function(e) {
+      e.stopPropagation();
+      e.preventDefault();
+  
+      createNewDiagram();
+    });
+  
+    $('.buttons a').click(function(e) {
+      if (!$(this).is('.active')) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    });
+  
+    var exportArtifacts = debounce(function() {
+  
+      saveSVG();
+      saveDiagram();
+  
+    }, 500);
+  
+  
+    bpmnModeler.on('commandStack.changed', exportArtifacts);
+    bpmnModeler.on('comments.updated', exportArtifacts);
+  
+    bpmnModeler.on('canvas.click', function() {
+      bpmnModeler.get('comments').collapseAll();
+    });
+  
+    function debounce(fn, timeout) {
+  
+      var timer;
+    
+      return function() {
+        if (timer) {
+          clearTimeout(timer);
+        }
+    
+        timer = setTimeout(fn, timeout);
+      };
+    };
+  
+  });
+  
+  } else {
+    // Show error message or redirect to an access denied page
+    window.location.href = 'access-denied.html';
+  }
+}).catch(error => {
+  console.error('Error occurred while checking access:', error);
 });
 
-container.removeClass('with-diagram');
 
 function createNewDiagram() {
   openDiagram(diagramXML);
 }
+
+
 
 async function openDiagram(xml) {
 
@@ -114,174 +190,44 @@ if (!window.FileList || !window.FileReader) {
   registerFileDrop(container, openDiagram);
 }
 
-// bootstrap diagram functions
-/** 
-$(function() {
 
-  $('#js-create-diagram').click(function(e) {
-    e.stopPropagation();
-    e.preventDefault();
+function setEncoded(link, name, data) {
+  var encodedData = encodeURIComponent(data);
 
-    createNewDiagram();
-  });
-
-  var downloadLink = $('#js-download-diagram');
-  var downloadSvgLink = $('#js-download-svg');
-  // var deployLink = $('#js-deploy-resource');
-
-  $('.buttons a').click(function(e) {
-    if (!$(this).is('.active')) {
-      e.preventDefault();
-      e.stopPropagation();
-    }
-  });
-  **/
-/**
-  deployLink.click(function(e) {
-    if(deployer) {
-      return;
-    }
-
-    var closeBtn = document.createElement('button');
-    closeBtn.textContent = 'X';
-    closeBtn.addEventListener('click', function() {
-      $('#js-resource-deployer').toggleClass('active', false);
-      deployer.close();
-      deployer = null;
+  if (data) {
+    link.addClass('active').attr({
+      'href': 'data:application/bpmn20-xml;charset=UTF-8,' + encodedData,
+      'download': name
     });
-
-    $('#js-resource-deployer').append(closeBtn);
-
-    var filename = bpmnModeler.get('canvas').getRootElement().businessObject.name;
-    if(filename) {
-      filename += '.bpmn';
-    }
-    else {
-      filename = 'process.bpmn';
-    }
-
-    deployer = new ResourceDeployer({
-      apiUrl: 'http://localhost:8080/engine-rest',
-      filename: filename,
-      container: $('#js-resource-deployer')[0],
-      resourceProvider: function(done) {
-        bpmnModeler.saveXML(done); // maybe here we need an await?
-      }
-    });
-
-    $('#js-resource-deployer').toggleClass('active');
-
-  });
- */
-  function setEncoded(link, name, data) {
-    var encodedData = encodeURIComponent(data);
-
-    if (data) {
-      link.addClass('active').attr({
-        'href': 'data:application/bpmn20-xml;charset=UTF-8,' + encodedData,
-        'download': name
-      });
-    } else {
-      link.removeClass('active');
-    }
+  } else {
+    link.removeClass('active');
   }
+}
 
-  // var exportArtifacts = debounce(async function() {
-
-  //   try {
-
-  //     const { svg } = await bpmnModeler.saveSVG();
-
-  //     setEncoded(downloadSvgLink, 'diagram.svg', svg);
-  //   } catch (err) {
-
-  //     console.error('Error happened saving SVG: ', err);
-
-  //     setEncoded(downloadSvgLink, 'diagram.svg', null);
-  //   }
-
-  //   try {
-
-  //     const { xml } = await bpmnModeler.saveXML({ format: true });
-
-  //     setEncoded(downloadLink, 'diagram.bpmn', xml);
-  //   } catch (err) {
-
-  //     console.log('Error happened saving XML: ', err);
-
-  //     setEncoded(downloadLink, 'diagram.bpmn', null);
-  //   }
-
-  //   // deployLink.addClass('active');
-  // }, 500);
-  async function saveSVG() {
-    try {
-      const result = await bpmnModeler.saveSVG();
-      const { svg } = result;
-      const { err } = result;
-      var downloadSvgLink = $('#js-download-svg');
-      setEncoded(downloadSvgLink, 'diagram.svg', err ? null : svg);
-    }
-    catch(err) {
-      console.log(err);
-    }
+async function saveSVG() {
+  try {
+    const result = await bpmnModeler.saveSVG();
+    const { svg } = result;
+    const { err } = result;
+    var downloadSvgLink = $('#js-download-svg');
+    setEncoded(downloadSvgLink, 'diagram.svg', err ? null : svg);
   }
-  
-  async function saveDiagram() {
-    try {
-      const result = await bpmnModeler.saveXML({ format: true });
-      const { xml } = result;
-      const { err } = result;
-      var downloadLink = $('#js-download-diagram');
-      setEncoded(downloadLink, 'diagram.bpmn', err ? null : xml);
-    }
-    catch(err) {
-      console.log(err);
-    }
+  catch(err) {
+    console.log(err);
   }
-  
-  $(function() {
+}
 
-    $('#js-create-diagram').click(function(e) {
-      e.stopPropagation();
-      e.preventDefault();
-  
-      createNewDiagram();
-    });
+async function saveDiagram() {
+  try {
+    const result = await bpmnModeler.saveXML({ format: true });
+    const { xml } = result;
+    const { err } = result;
+    var downloadLink = $('#js-download-diagram');
+    setEncoded(downloadLink, 'diagram.bpmn', err ? null : xml);
+  }
+  catch(err) {
+    console.log(err);
+  }
+}
 
-    $('.buttons a').click(function(e) {
-      if (!$(this).is('.active')) {
-        e.preventDefault();
-        e.stopPropagation();
-      }
-    });
-  
-    var exportArtifacts = debounce(function() {
-  
-      saveSVG();
-      saveDiagram();
-  
-    }, 500);
-  
-  
-    bpmnModeler.on('commandStack.changed', exportArtifacts);
-    bpmnModeler.on('comments.updated', exportArtifacts);
-  
-  bpmnModeler.on('canvas.click', function() {
-    bpmnModeler.get('comments').collapseAll();
-  });
-  function debounce(fn, timeout) {
-
-    var timer;
-  
-    return function() {
-      if (timer) {
-        clearTimeout(timer);
-      }
-  
-      timer = setTimeout(fn, timeout);
-    };
-  };
-
-});
 
